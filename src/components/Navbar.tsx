@@ -51,6 +51,11 @@ export const Navbar: React.FC = () => {
                 Cart ({getCartCount()})
               </Link>
               
+              {/* View Profile Link - Now displayed next to username */}
+              <Link to="/profile/view" style={styles.viewProfileLink}>
+                View Profile
+              </Link>
+              
               {/* Profile Dropdown */}
               <div style={styles.profileContainer} ref={dropdownRef}>
                 <button onClick={handleProfileClick} style={styles.profileButton}>
@@ -59,6 +64,7 @@ export const Navbar: React.FC = () => {
                       {user?.name?.charAt(0).toUpperCase() || 'U'}
                     </span>
                   </div>
+                  <span style={styles.userName}>{user?.name}</span>
                   <span style={styles.dropdownArrow}>{isProfileOpen ? '▲' : '▼'}</span>
                 </button>
                 
@@ -148,6 +154,17 @@ const styles = {
     fontSize: '14px',
     fontWeight: '500',
   },
+  viewProfileLink: {
+    color: '#4fc3f7',
+    textDecoration: 'none',
+    padding: '8px 16px',
+    borderRadius: '6px',
+    transition: 'all 0.3s',
+    fontSize: '14px',
+    fontWeight: '500',
+    backgroundColor: 'rgba(79, 195, 247, 0.1)',
+    border: '1px solid rgba(79, 195, 247, 0.3)',
+  },
   profileContainer: {
     position: 'relative' as const,
   },
@@ -158,7 +175,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '8px',
-    padding: '4px 8px 4px 4px',
+    padding: '4px 12px 4px 4px',
     borderRadius: '30px',
     transition: 'background-color 0.3s',
     backgroundColor: 'rgba(255, 255, 255, 0.1)',
@@ -177,10 +194,15 @@ const styles = {
     fontSize: '18px',
     fontWeight: 'bold',
   },
+  userName: {
+    color: 'white',
+    fontSize: '14px',
+    fontWeight: '500',
+  },
   dropdownArrow: {
     fontSize: '10px',
     color: 'white',
-    marginRight: '4px',
+    marginLeft: '4px',
   },
   dropdownMenu: {
     position: 'absolute' as const,
@@ -216,12 +238,6 @@ const styles = {
   },
   userDetails: {
     flex: 1,
-  },
-  userName: {
-    fontSize: '14px',
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: '4px',
   },
   userEmail: {
     fontSize: '12px',
@@ -292,6 +308,11 @@ styleSheet.textContent = `
   
   .nav-link:hover {
     background-color: rgba(255, 255, 255, 0.1);
+  }
+  
+  .view-profile-link:hover {
+    background-color: rgba(79, 195, 247, 0.2);
+    transform: translateY(-2px);
   }
 `;
 document.head.appendChild(styleSheet);

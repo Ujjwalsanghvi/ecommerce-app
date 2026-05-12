@@ -13,6 +13,7 @@ import { Checkout } from './pages/Checkout';
 import { Address } from './pages/Profile/Address';
 import { Orders } from './pages/Profile/Orders';
 import { Wallet } from './pages/Profile/Wallet';
+import { ViewProfile } from './pages/Profile/ViewProfile';
 
 function App() {
   return (
@@ -43,6 +44,14 @@ function App() {
               }
             />
             {/* Profile Routes */}
+            <Route
+              path="/profile/view"
+              element={
+                <ProtectedRoute>
+                  <ViewProfile />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/profile/address"
               element={
