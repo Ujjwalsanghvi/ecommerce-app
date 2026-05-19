@@ -56,7 +56,6 @@ export const Login: React.FC = () => {
       return false;
     }
     
-    // Check password requirements
     const passwordChecks = validatePassword(password, email);
     if (!passwordChecks.length || !passwordChecks.notInEmail || 
         !passwordChecks.uppercase || !passwordChecks.lowercase || 
@@ -96,7 +95,6 @@ export const Login: React.FC = () => {
       return;
     }
     
-    // Check password requirements before login
     const passwordChecks = validatePassword(password, email);
     if (!passwordChecks.length || !passwordChecks.notInEmail || 
         !passwordChecks.uppercase || !passwordChecks.lowercase || 
@@ -220,48 +218,27 @@ export const Login: React.FC = () => {
                   </button>
                 </div>
                 
-                {/* Hover Popup Tooltip */}
                 {isPasswordHovered && (
                   <div style={styles.passwordTooltip}>
-                    <div style={styles.tooltipTitle}>
-                      Password Requirements:
-                    </div>
+                    <div style={styles.tooltipTitle}>Password Requirements:</div>
                     <div style={styles.tooltipList}>
-                      <div style={{
-                        ...styles.tooltipItem,
-                        color: passwordChecks.length ? '#4caf50' : '#f44336'
-                      }}>
-                        {passwordChecks.length ? '✓' : '❌'} Minimum of eight (8) characters in length
+                      <div style={{...styles.tooltipItem, color: passwordChecks.length ? '#4caf50' : '#f44336'}}>
+                        {passwordChecks.length ? '✓' : '❌'} Minimum of eight (8) characters
                       </div>
-                      <div style={{
-                        ...styles.tooltipItem,
-                        color: passwordChecks.notInEmail ? '#4caf50' : '#f44336'
-                      }}>
-                        {passwordChecks.notInEmail ? '✓' : '❌'} Cannot be part of Email Address
+                      <div style={{...styles.tooltipItem, color: passwordChecks.notInEmail ? '#4caf50' : '#f44336'}}>
+                        {passwordChecks.notInEmail ? '✓' : '❌'} Cannot be part of email
                       </div>
-                      <div style={{
-                        ...styles.tooltipItem,
-                        color: passwordChecks.uppercase ? '#4caf50' : '#f44336'
-                      }}>
-                        {passwordChecks.uppercase ? '✓' : '❌'} At least one (1) uppercase letter (A-Z)
+                      <div style={{...styles.tooltipItem, color: passwordChecks.uppercase ? '#4caf50' : '#f44336'}}>
+                        {passwordChecks.uppercase ? '✓' : '❌'} One uppercase letter
                       </div>
-                      <div style={{
-                        ...styles.tooltipItem,
-                        color: passwordChecks.lowercase ? '#4caf50' : '#f44336'
-                      }}>
-                        {passwordChecks.lowercase ? '✓' : '❌'} At least one (1) lowercase letter (a-z)
+                      <div style={{...styles.tooltipItem, color: passwordChecks.lowercase ? '#4caf50' : '#f44336'}}>
+                        {passwordChecks.lowercase ? '✓' : '❌'} One lowercase letter
                       </div>
-                      <div style={{
-                        ...styles.tooltipItem,
-                        color: passwordChecks.number ? '#4caf50' : '#f44336'
-                      }}>
-                        {passwordChecks.number ? '✓' : '❌'} At least one (1) number (0-9)
+                      <div style={{...styles.tooltipItem, color: passwordChecks.number ? '#4caf50' : '#f44336'}}>
+                        {passwordChecks.number ? '✓' : '❌'} One number
                       </div>
-                      <div style={{
-                        ...styles.tooltipItem,
-                        color: passwordChecks.special ? '#4caf50' : '#f44336'
-                      }}>
-                        {passwordChecks.special ? '✓' : '❌'} At least one (1) special character (!, @, #, $, %, ^, &, *)
+                      <div style={{...styles.tooltipItem, color: passwordChecks.special ? '#4caf50' : '#f44336'}}>
+                        {passwordChecks.special ? '✓' : '❌'} One special character
                       </div>
                     </div>
                   </div>
@@ -371,6 +348,10 @@ const styles = {
     minHeight: 'calc(100vh - 80px)',
     backgroundColor: '#f0f2f5',
     padding: '20px',
+    '@media (max-width: 768px)': {
+      padding: '15px',
+      minHeight: 'calc(100vh - 70px)',
+    },
   },
   formContainer: {
     backgroundColor: 'white',
@@ -379,6 +360,10 @@ const styles = {
     boxShadow: '0 4px 20px rgba(0,0,0,0.08)',
     width: '100%',
     maxWidth: '450px',
+    '@media (max-width: 768px)': {
+      padding: '25px',
+      margin: '10px',
+    },
   },
   title: {
     textAlign: 'center' as const,
@@ -386,17 +371,27 @@ const styles = {
     color: '#1a1a2e',
     fontSize: '28px',
     fontWeight: 'bold',
+    '@media (max-width: 768px)': {
+      fontSize: '24px',
+    },
   },
   subtitle: {
     textAlign: 'center' as const,
     marginBottom: '30px',
     color: '#666',
     fontSize: '14px',
+    '@media (max-width: 768px)': {
+      fontSize: '13px',
+      marginBottom: '25px',
+    },
   },
   form: {
     display: 'flex',
     flexDirection: 'column' as const,
     gap: '20px',
+    '@media (max-width: 768px)': {
+      gap: '18px',
+    },
   },
   inputGroup: {
     display: 'flex',
@@ -407,6 +402,9 @@ const styles = {
     fontSize: '14px',
     fontWeight: '600',
     color: '#333',
+    '@media (max-width: 768px)': {
+      fontSize: '13px',
+    },
   },
   required: {
     color: '#f44336',
@@ -427,9 +425,10 @@ const styles = {
     transition: 'all 0.3s',
     backgroundColor: '#fff',
     boxSizing: 'border-box' as const,
-    ':focus': {
-      borderColor: '#4fc3f7',
-      boxShadow: '0 0 0 3px rgba(79, 195, 247, 0.1)',
+    '@media (max-width: 768px)': {
+      padding: '10px 12px',
+      paddingRight: '55px',
+      fontSize: '14px',
     },
   },
   inputValid: {
@@ -452,6 +451,9 @@ const styles = {
   counterText: {
     fontSize: '12px',
     color: '#999',
+    '@media (max-width: 768px)': {
+      fontSize: '11px',
+    },
   },
   counterWarning: {
     color: '#ff9800',
@@ -466,16 +468,25 @@ const styles = {
     color: '#999',
     marginTop: '4px',
     lineHeight: '1.4',
+    '@media (max-width: 768px)': {
+      fontSize: '11px',
+    },
   },
   hintSuccess: {
     color: '#4caf50',
     fontSize: '12px',
     marginTop: '4px',
+    '@media (max-width: 768px)': {
+      fontSize: '11px',
+    },
   },
   hintError: {
     color: '#f44336',
     fontSize: '12px',
     marginTop: '4px',
+    '@media (max-width: 768px)': {
+      fontSize: '11px',
+    },
   },
   passwordWrapper: {
     position: 'relative' as const,
@@ -499,8 +510,9 @@ const styles = {
     padding: '4px 8px',
     borderRadius: '4px',
     zIndex: 1,
-    ':hover': {
-      backgroundColor: '#f0f0f0',
+    '@media (max-width: 768px)': {
+      fontSize: '12px',
+      padding: '4px 6px',
     },
   },
   passwordTooltip: {
@@ -516,6 +528,12 @@ const styles = {
     padding: '16px',
     zIndex: 1000,
     animation: 'fadeIn 0.2s ease-in-out',
+    '@media (max-width: 768px)': {
+      width: 'calc(100vw - 40px)',
+      maxWidth: '300px',
+      left: '50%',
+      transform: 'translateX(-50%)',
+    },
   },
   tooltipTitle: {
     fontSize: '14px',
@@ -524,6 +542,9 @@ const styles = {
     marginBottom: '12px',
     paddingBottom: '8px',
     borderBottom: '2px solid #4fc3f7',
+    '@media (max-width: 768px)': {
+      fontSize: '13px',
+    },
   },
   tooltipList: {
     display: 'flex',
@@ -537,33 +558,30 @@ const styles = {
     gap: '8px',
     lineHeight: '1.5',
     padding: '4px 0',
+    '@media (max-width: 768px)': {
+      fontSize: '11px',
+    },
   },
   button: {
     backgroundColor: '#4fc3f7',
     color: 'white',
     border: 'none',
-    padding: '12px',
+    padding: '14px',
     borderRadius: '8px',
     fontSize: '16px',
     fontWeight: '600',
     cursor: 'pointer',
     transition: 'all 0.3s',
     marginTop: '10px',
-    ':hover': {
-      backgroundColor: '#45b5e6',
-      transform: 'translateY(-1px)',
-      boxShadow: '0 2px 8px rgba(79, 195, 247, 0.3)',
+    '@media (max-width: 768px)': {
+      padding: '12px',
+      fontSize: '15px',
     },
   },
   buttonDisabled: {
     backgroundColor: '#ccc',
     cursor: 'not-allowed',
     opacity: 0.6,
-    ':hover': {
-      backgroundColor: '#ccc',
-      transform: 'none',
-      boxShadow: 'none',
-    },
   },
   error: {
     backgroundColor: '#ffebee',
@@ -573,6 +591,10 @@ const styles = {
     marginBottom: '20px',
     textAlign: 'center' as const,
     fontSize: '13px',
+    '@media (max-width: 768px)': {
+      padding: '10px',
+      fontSize: '12px',
+    },
   },
   success: {
     backgroundColor: '#e8f5e9',
@@ -582,6 +604,10 @@ const styles = {
     marginBottom: '20px',
     textAlign: 'center' as const,
     fontSize: '13px',
+    '@media (max-width: 768px)': {
+      padding: '10px',
+      fontSize: '12px',
+    },
   },
   links: {
     display: 'flex',
@@ -589,14 +615,19 @@ const styles = {
     marginTop: '10px',
     paddingTop: '10px',
     borderTop: '1px solid #f0f0f0',
+    '@media (max-width: 768px)': {
+      flexDirection: 'column',
+      gap: '10px',
+      alignItems: 'center',
+    },
   },
   link: {
     color: '#4fc3f7',
     textDecoration: 'none',
     fontSize: '13px',
     fontWeight: '500',
-    ':hover': {
-      textDecoration: 'underline',
+    '@media (max-width: 768px)': {
+      fontSize: '12px',
     },
   },
   linkButton: {
@@ -607,8 +638,8 @@ const styles = {
     fontSize: '13px',
     fontWeight: '500',
     textDecoration: 'none',
-    ':hover': {
-      textDecoration: 'underline',
+    '@media (max-width: 768px)': {
+      fontSize: '12px',
     },
   },
   backButton: {
@@ -624,29 +655,33 @@ const styles = {
     textAlign: 'center' as const,
     borderRadius: '6px',
     transition: 'backgroundColor 0.3s',
-    ':hover': {
-      backgroundColor: '#f5f5f5',
+    '@media (max-width: 768px)': {
+      fontSize: '13px',
     },
   },
-} as const;
+};
 
 // Add animation styles
-const globalStyles = `
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
+const styleSheet = document.createElement("style");
+styleSheet.textContent = `
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  
+  input:focus {
+    border-color: #4fc3f7;
+    box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.1);
   }
-}
+  
+  button:hover {
+    opacity: 0.9;
+  }
 `;
-
-// Inject global styles
-if (typeof document !== 'undefined') {
-  const styleSheet = document.createElement("style");
-  styleSheet.textContent = globalStyles;
-  document.head.appendChild(styleSheet);
-}
+document.head.appendChild(styleSheet);

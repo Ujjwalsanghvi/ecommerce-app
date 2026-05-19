@@ -368,6 +368,10 @@ const styles = {
     minHeight: 'calc(100vh - 80px)',
     backgroundColor: '#f5f5f5',
     padding: '20px',
+    '@media (max-width: 768px)': {
+      padding: '15px',
+      minHeight: 'calc(100vh - 70px)',
+    },
   },
   formContainer: {
     backgroundColor: 'white',
@@ -376,17 +380,28 @@ const styles = {
     boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
     width: '100%',
     maxWidth: '500px',
+    '@media (max-width: 768px)': {
+      padding: '25px',
+      margin: '10px',
+    },
   },
   title: {
     textAlign: 'center' as const,
     marginBottom: '30px',
     color: '#333',
     fontSize: '28px',
+    '@media (max-width: 768px)': {
+      fontSize: '24px',
+      marginBottom: '25px',
+    },
   },
   form: {
     display: 'flex',
     flexDirection: 'column' as const,
     gap: '20px',
+    '@media (max-width: 768px)': {
+      gap: '18px',
+    },
   },
   inputGroup: {
     display: 'flex',
@@ -397,6 +412,9 @@ const styles = {
     fontSize: '14px',
     fontWeight: 'bold',
     color: '#555',
+    '@media (max-width: 768px)': {
+      fontSize: '13px',
+    },
   },
   required: {
     color: '#f44336',
@@ -410,6 +428,10 @@ const styles = {
     outline: 'none',
     transition: 'border-color 0.3s',
     width: '100%',
+    '@media (max-width: 768px)': {
+      padding: '10px',
+      fontSize: '14px',
+    },
     ':focus': {
       borderColor: '#4fc3f7',
     },
@@ -437,6 +459,9 @@ const styles = {
   counterText: {
     fontSize: '12px',
     color: '#999',
+    '@media (max-width: 768px)': {
+      fontSize: '11px',
+    },
   },
   counterWarning: {
     color: '#ff9800',
@@ -449,11 +474,17 @@ const styles = {
   emailHint: {
     fontSize: '12px',
     marginTop: '4px',
+    '@media (max-width: 768px)': {
+      fontSize: '11px',
+    },
   },
   hintSuccess: {
     color: '#4caf50',
     fontSize: '12px',
     marginTop: '4px',
+    '@media (max-width: 768px)': {
+      fontSize: '11px',
+    },
   },
   hintWarning: {
     color: '#ff9800',
@@ -462,6 +493,9 @@ const styles = {
     color: '#f44336',
     fontSize: '12px',
     marginTop: '4px',
+    '@media (max-width: 768px)': {
+      fontSize: '11px',
+    },
   },
   passwordWrapper: {
     position: 'relative' as const,
@@ -480,6 +514,10 @@ const styles = {
     fontSize: '16px',
     outline: 'none',
     transition: 'border-color 0.3s',
+    '@media (max-width: 768px)': {
+      padding: '10px',
+      fontSize: '14px',
+    },
     ':focus': {
       borderColor: '#4fc3f7',
     },
@@ -495,6 +533,10 @@ const styles = {
     cursor: 'pointer',
     fontSize: '14px',
     fontWeight: 'bold',
+    '@media (max-width: 768px)': {
+      fontSize: '12px',
+      padding: '4px 6px',
+    },
     ':hover': {
       color: '#45b5e6',
     },
@@ -512,6 +554,12 @@ const styles = {
     padding: '15px',
     zIndex: 1000,
     animation: 'fadeIn 0.2s ease-in-out',
+    '@media (max-width: 768px)': {
+      width: 'calc(100vw - 40px)',
+      maxWidth: '300px',
+      left: '50%',
+      transform: 'translateX(-50%)',
+    },
   },
   tooltipTitle: {
     fontSize: '14px',
@@ -520,6 +568,9 @@ const styles = {
     marginBottom: '10px',
     paddingBottom: '8px',
     borderBottom: '1px solid #eee',
+    '@media (max-width: 768px)': {
+      fontSize: '13px',
+    },
   },
   tooltipList: {
     display: 'flex',
@@ -532,12 +583,18 @@ const styles = {
     alignItems: 'center',
     gap: '8px',
     lineHeight: '1.4',
+    '@media (max-width: 768px)': {
+      fontSize: '11px',
+    },
   },
   passwordHint: {
     fontSize: '12px',
     color: '#999',
     lineHeight: '1.4',
     marginTop: '4px',
+    '@media (max-width: 768px)': {
+      fontSize: '11px',
+    },
   },
   button: {
     backgroundColor: '#4fc3f7',
@@ -550,6 +607,10 @@ const styles = {
     cursor: 'pointer',
     transition: 'all 0.3s',
     marginTop: '10px',
+    '@media (max-width: 768px)': {
+      padding: '12px',
+      fontSize: '15px',
+    },
     ':hover': {
       backgroundColor: '#45b5e6',
     },
@@ -571,6 +632,10 @@ const styles = {
     textAlign: 'center' as const,
     fontSize: '14px',
     whiteSpace: 'pre-line' as const,
+    '@media (max-width: 768px)': {
+      padding: '10px',
+      fontSize: '12px',
+    },
   },
   links: {
     textAlign: 'center' as const,
@@ -580,6 +645,9 @@ const styles = {
     color: '#4fc3f7',
     textDecoration: 'none',
     fontSize: '14px',
+    '@media (max-width: 768px)': {
+      fontSize: '12px',
+    },
     ':hover': {
       textDecoration: 'underline',
     },
@@ -596,6 +664,17 @@ const globalStyles = `
   to {
     opacity: 1;
     transform: translateY(0);
+  }
+}
+
+/* Additional responsive styles */
+@media (max-width: 480px) {
+  .form-container {
+    padding: 20px !important;
+  }
+  
+  .password-tooltip {
+    width: calc(100vw - 30px) !important;
   }
 }
 `;
