@@ -98,11 +98,11 @@ export const Cart: React.FC = () => {
             </div>
           </div>
           
-          {/* Order Summary Section - Below cart on mobile, side by side on desktop */}
-          <div className="order-summary-section">
-            <div className="order-summary">
-              <h3 className="summary-title">Order Summary</h3>
-              <div className="summary-row">
+          {/* Order Summary Section */}
+          <div className="flex-1">
+            <div className="bg-white rounded-xl p-6 shadow-sm sticky top-[100px] md:static">
+              <h3 className="text-lg font-semibold text-gray-800 mb-5 pb-2 border-b-2 border-blue-400">Order Summary</h3>
+              <div className="flex justify-between mb-4 text-base text-gray-500">
                 <span>Subtotal:</span>
                 <span>${getCartTotal().toFixed(2)}</span>
               </div>
