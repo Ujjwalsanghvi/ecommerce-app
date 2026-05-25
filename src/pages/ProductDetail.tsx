@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '../services/api';
 import { Product } from '../types/Mainview';
 import { useCart } from '../contexts/CartContext';
+import { useWishlist } from '../contexts/WishlistContext';
 
 export const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -10,6 +11,7 @@ export const ProductDetail: React.FC = () => {
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
   const { addToCart } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -36,42 +38,68 @@ export const ProductDetail: React.FC = () => {
     }
   };
 
+  const handleFavoriteToggle = () => {
+    if (product) {
+      if (isInWishlist(product.id)) {
+        removeFromWishlist(product.id);
+      } else {
+        addToWishlist(product);
+      }
+    }
+  };
+
   if (loading) {
-    return <div style={styles.loading}>Loading...</div>;
+    return <div className="text-center text-2xl text-gray-500 mt-12">Loading...</div>;
   }
 
   if (!product) {
-    return <div style={styles.error}>Product not found</div>;
+    return <div className="text-center text-2xl text-red-500 mt-12">Product not found</div>;
   }
 
   return (
-    <div style={styles.container}>
-      <div style={styles.productDetail}>
-        <div style={styles.imageContainer}>
-          <img src={product.image} alt={product.title} style={styles.image} />
+    <div className="max-w-[1200px] mx-auto px-5 py-10">
+      <div className="grid grid-cols-2 gap-10">
+        <div className="text-center">
+          <img 
+            src={product.image} 
+            alt={product.title} 
+            className="max-w-full h-[400px] object-contain" 
+          />
         </div>
         
-        <div style={styles.infoContainer}>
-          <h1 style={styles.title}>{product.title}</h1>
-          <p style={styles.category}>Category: {product.category}</p>
-          <div style={styles.rating}>
+        <div className="flex flex-col gap-4">
+          <div className="flex justify-between items-center">
+            <h1 className="text-[28px] text-gray-800">{product.title}</h1>
+            <button
+              onClick={handleFavoriteToggle}
+              className="bg-none border-none text-[28px] cursor-pointer p-2"
+              style={{ color: isInWishlist(product.id) ? '#ff4444' : '#cccccc' }}
+            >
+              {isInWishlist(product.id) ? '❤️' : '🤍'}
+            </button>
+          </div>
+          <p className="text-base text-gray-500 capitalize">Category: {product.category}</p>
+          <div className="text-base text-amber-400">
             Rating: {product.rating.rate} ★ ({product.rating.count} reviews)
           </div>
-          <p style={styles.description}>{product.description}</p>
-          <div style={styles.price}>${product.price.toFixed(2)}</div>
+          <p className="text-base leading-relaxed text-gray-500">{product.description}</p>
+          <div className="text-3xl font-bold text-blue-400">${product.price.toFixed(2)}</div>
           
-          <div style={styles.quantityContainer}>
-            <label style={styles.quantityLabel}>Quantity:</label>
+          <div className="flex items-center gap-2.5">
+            <label className="text-base font-bold">Quantity:</label>
             <input
               type="number"
               min="1"
               value={quantity}
               onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-              style={styles.quantityInput}
+              className="w-[60px] p-2 text-base border border-gray-300 rounded-md focus:outline-none focus:border-blue-400"
             />
           </div>
           
-          <button onClick={handleAddToCart} style={styles.addToCartBtn}>
+          <button 
+            onClick={handleAddToCart} 
+            className="bg-blue-400 text-white border-none py-3.5 text-lg rounded-md cursor-pointer mt-5 transition-colors duration-300 hover:bg-blue-500"
+          >
             Add to Cart
           </button>
         </div>
@@ -80,89 +108,4 @@ export const ProductDetail: React.FC = () => {
   );
 };
 
-const styles = {
-  container: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '40px 20px',
-  },
-  productDetail: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '40px',
-  },
-  imageContainer: {
-    textAlign: 'center' as const,
-  },
-  image: {
-    maxWidth: '100%',
-    height: '400px',
-    objectFit: 'contain' as const,
-  },
-  infoContainer: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '15px',
-  },
-  title: {
-    fontSize: '28px',
-    color: '#333',
-  },
-  category: {
-    fontSize: '16px',
-    color: '#666',
-    textTransform: 'capitalize' as const,
-  },
-  rating: {
-    fontSize: '16px',
-    color: '#ffc107',
-  },
-  description: {
-    fontSize: '16px',
-    lineHeight: '1.6',
-    color: '#666',
-  },
-  price: {
-    fontSize: '32px',
-    fontWeight: 'bold',
-    color: '#4fc3f7',
-  },
-  quantityContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '10px',
-  },
-  quantityLabel: {
-    fontSize: '16px',
-    fontWeight: 'bold',
-  },
-  quantityInput: {
-    width: '60px',
-    padding: '8px',
-    fontSize: '16px',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-  },
-  addToCartBtn: {
-    backgroundColor: '#4fc3f7',
-    color: 'white',
-    border: 'none',
-    padding: '15px',
-    fontSize: '18px',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    marginTop: '20px',
-    transition: 'background-color 0.3s',
-  },
-  loading: {
-    textAlign: 'center' as const,
-    fontSize: '24px',
-    marginTop: '50px',
-  },
-  error: {
-    textAlign: 'center' as const,
-    fontSize: '24px',
-    marginTop: '50px',
-    color: '#f44336',
-  },
-} as const;
+export default ProductDetail;

@@ -28,7 +28,6 @@ export const Wallet: React.FC = () => {
     if (savedBalance) {
       setBalance(parseFloat(savedBalance));
     } else {
-      // Demo balance
       setBalance(500.00);
       localStorage.setItem(`wallet_balance_${user?.id}`, '500.00');
     }
@@ -36,7 +35,6 @@ export const Wallet: React.FC = () => {
     if (savedTransactions) {
       setTransactions(JSON.parse(savedTransactions));
     } else {
-      // Demo transactions
       const demoTransactions: Transaction[] = [
         {
           id: 'TXN-001',
@@ -90,23 +88,23 @@ export const Wallet: React.FC = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>My Wallet</h1>
+    <div className="max-w-[1200px] mx-auto px-5 py-10">
+      <h1 className="text-[28px] text-gray-800 mb-8">My Wallet</h1>
       
-      <div style={styles.balanceCard}>
-        <div style={styles.balanceInfo}>
-          <span style={styles.balanceLabel}>Current Balance</span>
-          <span style={styles.balanceAmount}>${balance.toFixed(2)}</span>
+      <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-8 rounded-xl flex justify-between items-center mb-10 text-white">
+        <div className="flex flex-col gap-2.5">
+          <span className="text-sm opacity-90">Current Balance</span>
+          <span className="text-4xl font-bold">${balance.toFixed(2)}</span>
         </div>
-        <button onClick={() => setShowAddMoney(true)} style={styles.addMoneyButton}>
+        <button onClick={() => setShowAddMoney(true)} className="bg-white/20 text-white border border-white px-5 py-2.5 rounded-md cursor-pointer text-sm transition-all duration-300 hover:bg-white/30">
           + Add Money
         </button>
       </div>
 
       {showAddMoney && (
-        <div style={styles.modal}>
-          <div style={styles.modalContent}>
-            <h3 style={styles.modalTitle}>Add Money to Wallet</h3>
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[1000]">
+          <div className="bg-white p-8 rounded-xl w-[90%] max-w-[400px]">
+            <h3 className="text-xl text-gray-800 mb-5">Add Money to Wallet</h3>
             <form onSubmit={handleAddMoney}>
               <input
                 type="number"
@@ -117,10 +115,10 @@ export const Wallet: React.FC = () => {
                 max="10000"
                 step="0.01"
                 required
-                style={styles.amountInput}
+                className="w-full p-3 border border-gray-300 rounded-md text-base mb-5"
               />
-              <div style={styles.modalButtons}>
-                <button type="submit" style={styles.confirmButton}>
+              <div className="flex gap-2.5">
+                <button type="submit" className="flex-1 bg-green-500 text-white border-none py-2.5 rounded-md cursor-pointer">
                   Add Money
                 </button>
                 <button
@@ -129,7 +127,7 @@ export const Wallet: React.FC = () => {
                     setShowAddMoney(false);
                     setAmount('');
                   }}
-                  style={styles.cancelButton}
+                  className="flex-1 bg-red-500 text-white border-none py-2.5 rounded-md cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -139,34 +137,30 @@ export const Wallet: React.FC = () => {
         </div>
       )}
 
-      <div style={styles.transactionsSection}>
-        <h2 style={styles.sectionTitle}>Transaction History</h2>
+      <div className="mt-5">
+        <h2 className="text-xl text-gray-800 mb-5">Transaction History</h2>
         {transactions.length === 0 ? (
-          <div style={styles.emptyState}>
+          <div className="text-center p-10 bg-gray-50 rounded-lg text-gray-500">
             <p>No transactions yet.</p>
           </div>
         ) : (
-          <div style={styles.transactionsList}>
+          <div className="flex flex-col gap-2.5">
             {transactions.map(transaction => (
-              <div key={transaction.id} style={styles.transactionCard}>
-                <div style={styles.transactionInfo}>
+              <div key={transaction.id} className="border border-gray-200 rounded-lg p-4 bg-white">
+                <div className="flex justify-between items-center mb-2.5">
                   <div>
-                    <div style={styles.transactionDescription}>{transaction.description}</div>
-                    <div style={styles.transactionDate}>{transaction.date}</div>
+                    <div className="font-bold mb-1">{transaction.description}</div>
+                    <div className="text-xs text-gray-500">{transaction.date}</div>
                   </div>
-                  <div style={{
-                    ...styles.transactionAmount,
-                    color: transaction.type === 'credit' ? '#4caf50' : '#f44336'
-                  }}>
+                  <div className={`text-lg font-bold ${transaction.type === 'credit' ? 'text-green-500' : 'text-red-500'}`}>
                     {transaction.type === 'credit' ? '+' : '-'}${transaction.amount.toFixed(2)}
                   </div>
                 </div>
-                <div style={styles.transactionStatus}>
-                  <span style={{
-                    ...styles.statusBadge,
-                    backgroundColor: transaction.status === 'completed' ? '#4caf50' : 
-                                   transaction.status === 'pending' ? '#ff9800' : '#f44336'
-                  }}>
+                <div className="text-right">
+                  <span className={`inline-block px-2 py-1 rounded text-white text-[11px] uppercase ${
+                    transaction.status === 'completed' ? 'bg-green-500' : 
+                    transaction.status === 'pending' ? 'bg-orange-500' : 'bg-red-500'
+                  }`}>
                     {transaction.status}
                   </span>
                 </div>
@@ -179,157 +173,4 @@ export const Wallet: React.FC = () => {
   );
 };
 
-const styles = {
-  container: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '40px 20px',
-  },
-  title: {
-    fontSize: '28px',
-    color: '#333',
-    marginBottom: '30px',
-  },
-  balanceCard: {
-    backgroundColor: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    padding: '30px',
-    borderRadius: '12px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '40px',
-    color: 'white',
-  },
-  balanceInfo: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '10px',
-  },
-  balanceLabel: {
-    fontSize: '14px',
-    opacity: 0.9,
-  },
-  balanceAmount: {
-    fontSize: '36px',
-    fontWeight: 'bold',
-  },
-  addMoneyButton: {
-    backgroundColor: 'rgba(255,255,255,0.2)',
-    color: 'white',
-    border: '1px solid white',
-    padding: '10px 20px',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontSize: '14px',
-    transition: 'all 0.3s',
-  },
-  modal: {
-    position: 'fixed' as const,
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1000,
-  },
-  modalContent: {
-    backgroundColor: 'white',
-    padding: '30px',
-    borderRadius: '12px',
-    width: '90%',
-    maxWidth: '400px',
-  },
-  modalTitle: {
-    marginBottom: '20px',
-    color: '#333',
-  },
-  amountInput: {
-    width: '100%',
-    padding: '12px',
-    border: '1px solid #ddd',
-    borderRadius: '6px',
-    fontSize: '16px',
-    marginBottom: '20px',
-  },
-  modalButtons: {
-    display: 'flex',
-    gap: '10px',
-  },
-  confirmButton: {
-    flex: 1,
-    backgroundColor: '#4caf50',
-    color: 'white',
-    border: 'none',
-    padding: '10px',
-    borderRadius: '6px',
-    cursor: 'pointer',
-  },
-  cancelButton: {
-    flex: 1,
-    backgroundColor: '#f44336',
-    color: 'white',
-    border: 'none',
-    padding: '10px',
-    borderRadius: '6px',
-    cursor: 'pointer',
-  },
-  transactionsSection: {
-    marginTop: '20px',
-  },
-  sectionTitle: {
-    fontSize: '20px',
-    color: '#333',
-    marginBottom: '20px',
-  },
-  transactionsList: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '10px',
-  },
-  transactionCard: {
-    border: '1px solid #e0e0e0',
-    borderRadius: '8px',
-    padding: '15px',
-    backgroundColor: 'white',
-  },
-  transactionInfo: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '10px',
-  },
-  transactionDescription: {
-    fontWeight: 'bold',
-    marginBottom: '5px',
-  },
-  transactionDate: {
-    fontSize: '12px',
-    color: '#666',
-  },
-  transactionAmount: {
-    fontSize: '18px',
-    fontWeight: 'bold',
-  },
-  transactionStatus: {
-    textAlign: 'right' as const,
-  },
-  statusBadge: {
-    display: 'inline-block',
-    padding: '4px 8px',
-    borderRadius: '4px',
-    color: 'white',
-    fontSize: '11px',
-    textTransform: 'uppercase' as const,
-  },
-  emptyState: {
-    textAlign: 'center' as const,
-    padding: '40px',
-    backgroundColor: '#f9f9f9',
-    borderRadius: '8px',
-    color: '#666',
-  },
-} as const;
+export default Wallet;

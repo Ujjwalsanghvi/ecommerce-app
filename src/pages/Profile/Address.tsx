@@ -37,7 +37,6 @@ export const Address: React.FC = () => {
     if (savedAddresses) {
       setAddresses(JSON.parse(savedAddresses));
     } else {
-      // Demo addresses
       const demoAddresses = [
         {
           id: 1,
@@ -64,7 +63,6 @@ export const Address: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (editingAddress) {
-      // Update existing address
       const updatedAddresses = addresses.map(addr =>
         addr.id === editingAddress.id
           ? { ...formData, id: addr.id, isDefault: addr.isDefault }
@@ -72,7 +70,6 @@ export const Address: React.FC = () => {
       );
       saveAddresses(updatedAddresses);
     } else {
-      // Add new address
       const newAddress: Address = {
         id: Date.now(),
         ...formData,
@@ -123,9 +120,9 @@ export const Address: React.FC = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <div style={styles.header}>
-        <h1 style={styles.title}>My Addresses</h1>
+    <div className="max-w-[1200px] mx-auto px-5 py-10">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-[28px] text-gray-800">My Addresses</h1>
         <button onClick={() => {
           setEditingAddress(null);
           setFormData({
@@ -138,23 +135,23 @@ export const Address: React.FC = () => {
             phone: ''
           });
           setShowForm(true);
-        }} style={styles.addButton}>
+        }} className="bg-green-500 text-white border-none px-5 py-2.5 rounded-md cursor-pointer text-sm">
           + Add New Address
         </button>
       </div>
 
       {showForm && (
-        <div style={styles.modal}>
-          <div style={styles.formContainer}>
-            <h2 style={styles.formTitle}>{editingAddress ? 'Edit Address' : 'Add New Address'}</h2>
-            <form onSubmit={handleSubmit} style={styles.form}>
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-[1000]">
+          <div className="bg-white p-8 rounded-xl w-[90%] max-w-[500px]">
+            <h2 className="text-xl text-gray-800 mb-5">{editingAddress ? 'Edit Address' : 'Add New Address'}</h2>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <input
                 type="text"
                 placeholder="Full Name"
                 value={formData.fullName}
                 onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
                 required
-                style={styles.input}
+                className="p-3 border border-gray-300 rounded-md text-sm"
               />
               <input
                 type="text"
@@ -162,16 +159,16 @@ export const Address: React.FC = () => {
                 value={formData.street}
                 onChange={(e) => setFormData({ ...formData, street: e.target.value })}
                 required
-                style={styles.input}
+                className="p-3 border border-gray-300 rounded-md text-sm"
               />
-              <div style={styles.row}>
+              <div className="grid grid-cols-2 gap-4">
                 <input
                   type="text"
                   placeholder="City"
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                   required
-                  style={styles.rowInput}
+                  className="p-3 border border-gray-300 rounded-md text-sm"
                 />
                 <input
                   type="text"
@@ -179,17 +176,17 @@ export const Address: React.FC = () => {
                   value={formData.state}
                   onChange={(e) => setFormData({ ...formData, state: e.target.value })}
                   required
-                  style={styles.rowInput}
+                  className="p-3 border border-gray-300 rounded-md text-sm"
                 />
               </div>
-              <div style={styles.row}>
+              <div className="grid grid-cols-2 gap-4">
                 <input
                   type="text"
                   placeholder="ZIP Code"
                   value={formData.zipCode}
                   onChange={(e) => setFormData({ ...formData, zipCode: e.target.value })}
                   required
-                  style={styles.rowInput}
+                  className="p-3 border border-gray-300 rounded-md text-sm"
                 />
                 <input
                   type="text"
@@ -197,7 +194,7 @@ export const Address: React.FC = () => {
                   value={formData.country}
                   onChange={(e) => setFormData({ ...formData, country: e.target.value })}
                   required
-                  style={styles.rowInput}
+                  className="p-3 border border-gray-300 rounded-md text-sm"
                 />
               </div>
               <input
@@ -206,16 +203,16 @@ export const Address: React.FC = () => {
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 required
-                style={styles.input}
+                className="p-3 border border-gray-300 rounded-md text-sm"
               />
-              <div style={styles.formButtons}>
-                <button type="submit" style={styles.submitButton}>
+              <div className="flex gap-2.5 mt-2.5">
+                <button type="submit" className="flex-1 bg-green-500 text-white border-none py-3 rounded-md cursor-pointer">
                   {editingAddress ? 'Update' : 'Save'} Address
                 </button>
                 <button type="button" onClick={() => {
                   setShowForm(false);
                   setEditingAddress(null);
-                }} style={styles.cancelButton}>
+                }} className="flex-1 bg-red-500 text-white border-none py-3 rounded-md cursor-pointer">
                   Cancel
                 </button>
               </div>
@@ -224,35 +221,35 @@ export const Address: React.FC = () => {
         </div>
       )}
 
-      <div style={styles.addressesList}>
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(350px,1fr))] gap-5">
         {addresses.length === 0 ? (
-          <div style={styles.emptyState}>
+          <div className="text-center p-15 bg-gray-50 rounded-lg">
             <p>No addresses saved yet.</p>
-            <button onClick={() => setShowForm(true)} style={styles.emptyButton}>
+            <button onClick={() => setShowForm(true)} className="mt-5 bg-green-500 text-white border-none px-5 py-2.5 rounded-md cursor-pointer">
               Add Your First Address
             </button>
           </div>
         ) : (
           addresses.map(address => (
-            <div key={address.id} style={styles.addressCard}>
-              {address.isDefault && <span style={styles.defaultBadge}>Default</span>}
-              <div style={styles.addressContent}>
+            <div key={address.id} className="border border-gray-200 rounded-lg p-5 relative bg-white">
+              {address.isDefault && <span className="absolute top-2.5 right-2.5 bg-green-500 text-white px-2 py-1 rounded text-xs">Default</span>}
+              <div className="mb-4">
                 <p><strong>{address.fullName}</strong></p>
                 <p>{address.street}</p>
                 <p>{address.city}, {address.state} {address.zipCode}</p>
                 <p>{address.country}</p>
                 <p>📞 {address.phone}</p>
               </div>
-              <div style={styles.addressActions}>
+              <div className="flex gap-2.5 justify-end">
                 {!address.isDefault && (
-                  <button onClick={() => setDefaultAddress(address.id)} style={styles.setDefaultButton}>
+                  <button onClick={() => setDefaultAddress(address.id)} className="bg-blue-500 text-white border-none px-3 py-1.5 rounded text-xs cursor-pointer">
                     Set as Default
                   </button>
                 )}
-                <button onClick={() => handleEdit(address)} style={styles.editButton}>
+                <button onClick={() => handleEdit(address)} className="bg-orange-500 text-white border-none px-3 py-1.5 rounded text-xs cursor-pointer">
                   Edit
                 </button>
-                <button onClick={() => handleDelete(address.id)} style={styles.deleteButton}>
+                <button onClick={() => handleDelete(address.id)} className="bg-red-500 text-white border-none px-3 py-1.5 rounded text-xs cursor-pointer">
                   Delete
                 </button>
               </div>
@@ -264,169 +261,4 @@ export const Address: React.FC = () => {
   );
 };
 
-const styles = {
-  container: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '40px 20px',
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '30px',
-  },
-  title: {
-    fontSize: '28px',
-    color: '#333',
-  },
-  addButton: {
-    backgroundColor: '#4caf50',
-    color: 'white',
-    border: 'none',
-    padding: '10px 20px',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontSize: '14px',
-  },
-  modal: {
-    position: 'fixed' as const,
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1000,
-  },
-  formContainer: {
-    backgroundColor: 'white',
-    padding: '30px',
-    borderRadius: '12px',
-    width: '90%',
-    maxWidth: '500px',
-  },
-  formTitle: {
-    marginBottom: '20px',
-    color: '#333',
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '15px',
-  },
-  input: {
-    padding: '12px',
-    border: '1px solid #ddd',
-    borderRadius: '6px',
-    fontSize: '14px',
-  },
-  row: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '15px',
-  },
-  rowInput: {
-    padding: '12px',
-    border: '1px solid #ddd',
-    borderRadius: '6px',
-    fontSize: '14px',
-  },
-  formButtons: {
-    display: 'flex',
-    gap: '10px',
-    marginTop: '10px',
-  },
-  submitButton: {
-    flex: 1,
-    backgroundColor: '#4caf50',
-    color: 'white',
-    border: 'none',
-    padding: '12px',
-    borderRadius: '6px',
-    cursor: 'pointer',
-  },
-  cancelButton: {
-    flex: 1,
-    backgroundColor: '#f44336',
-    color: 'white',
-    border: 'none',
-    padding: '12px',
-    borderRadius: '6px',
-    cursor: 'pointer',
-  },
-  addressesList: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-    gap: '20px',
-  },
-  addressCard: {
-    border: '1px solid #e0e0e0',
-    borderRadius: '8px',
-    padding: '20px',
-    position: 'relative' as const,
-    backgroundColor: 'white',
-  },
-  defaultBadge: {
-    position: 'absolute' as const,
-    top: '10px',
-    right: '10px',
-    backgroundColor: '#4caf50',
-    color: 'white',
-    padding: '4px 8px',
-    borderRadius: '4px',
-    fontSize: '12px',
-  },
-  addressContent: {
-    marginBottom: '15px',
-  },
-  addressActions: {
-    display: 'flex',
-    gap: '10px',
-    justifyContent: 'flex-end',
-  },
-  setDefaultButton: {
-    backgroundColor: '#2196f3',
-    color: 'white',
-    border: 'none',
-    padding: '6px 12px',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontSize: '12px',
-  },
-  editButton: {
-    backgroundColor: '#ff9800',
-    color: 'white',
-    border: 'none',
-    padding: '6px 12px',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontSize: '12px',
-  },
-  deleteButton: {
-    backgroundColor: '#f44336',
-    color: 'white',
-    border: 'none',
-    padding: '6px 12px',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    fontSize: '12px',
-  },
-  emptyState: {
-    textAlign: 'center' as const,
-    padding: '60px',
-    backgroundColor: '#f9f9f9',
-    borderRadius: '8px',
-  },
-  emptyButton: {
-    marginTop: '20px',
-    backgroundColor: '#4caf50',
-    color: 'white',
-    border: 'none',
-    padding: '10px 20px',
-    borderRadius: '6px',
-    cursor: 'pointer',
-  },
-} as const;
+export default Address;

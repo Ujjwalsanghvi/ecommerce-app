@@ -35,7 +35,6 @@ export const Orders: React.FC = () => {
     if (savedOrders) {
       setOrders(JSON.parse(savedOrders));
     } else {
-      // Demo orders
       const demoOrders: Order[] = [
         {
           id: 'ORD-001',
@@ -104,55 +103,55 @@ export const Orders: React.FC = () => {
   };
 
   return (
-    <div style={styles.container}>
-      <h1 style={styles.title}>My Orders</h1>
+    <div className="max-w-[1200px] mx-auto px-5 py-10">
+      <h1 className="text-[28px] text-gray-800 mb-8">My Orders</h1>
       
       {orders.length === 0 ? (
-        <div style={styles.emptyState}>
+        <div className="text-center p-15 bg-gray-50 rounded-lg">
           <p>You haven't placed any orders yet.</p>
-          <Link to="/products" style={styles.shopButton}>
+          <Link to="/products" className="inline-block mt-5 bg-blue-400 text-white no-underline px-5 py-2.5 rounded-md">
             Start Shopping
           </Link>
         </div>
       ) : (
-        <div style={styles.ordersList}>
+        <div className="flex flex-col gap-5">
           {orders.map(order => (
-            <div key={order.id} style={styles.orderCard}>
-              <div style={styles.orderHeader}>
+            <div key={order.id} className="border border-gray-200 rounded-lg overflow-hidden bg-white">
+              <div className="flex justify-between items-center p-4 bg-gray-50 border-b border-gray-200">
                 <div>
-                  <span style={styles.orderId}>Order #{order.id}</span>
-                  <span style={styles.orderDate}>Placed on {new Date(order.date).toLocaleDateString()}</span>
+                  <span className="font-bold text-base mr-4">Order #{order.id}</span>
+                  <span className="text-gray-500 text-sm">Placed on {new Date(order.date).toLocaleDateString()}</span>
                 </div>
-                <span style={{...styles.orderStatus, backgroundColor: getStatusColor(order.status)}}>
+                <span className="px-3 py-1 rounded text-white text-xs font-bold" style={{ backgroundColor: getStatusColor(order.status) }}>
                   {order.status.toUpperCase()}
                 </span>
               </div>
               
-              <div style={styles.orderItems}>
+              <div className="p-5">
                 {order.items.map(item => (
-                  <div key={item.id} style={styles.orderItem}>
-                    <img src={item.image} alt={item.title} style={styles.itemImage} />
-                    <div style={styles.itemDetails}>
-                      <h4 style={styles.itemTitle}>{item.title}</h4>
+                  <div key={item.id} className="flex items-center gap-5 py-4 border-b border-gray-100 last:border-b-0">
+                    <img src={item.image} alt={item.title} className="w-20 h-20 object-contain" />
+                    <div className="flex-1">
+                      <h4 className="text-sm mb-1">{item.title}</h4>
                       <p>Quantity: {item.quantity}</p>
                       <p>Price: ${item.price.toFixed(2)}</p>
                     </div>
-                    <div style={styles.itemTotal}>
+                    <div className="font-bold text-base text-blue-400">
                       ${(item.price * item.quantity).toFixed(2)}
                     </div>
                   </div>
                 ))}
               </div>
               
-              <div style={styles.orderFooter}>
-                <div style={styles.shippingInfo}>
+              <div className="flex justify-between p-5 bg-gray-50 border-t border-gray-200">
+                <div className="text-xs text-gray-500">
                   <strong>Shipping Address:</strong>
                   <p>{order.shippingAddress.street}</p>
                   <p>{order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zipCode}</p>
                 </div>
-                <div style={styles.orderTotal}>
+                <div className="text-right">
                   <strong>Total Amount:</strong>
-                  <span style={styles.totalAmount}>${order.total.toFixed(2)}</span>
+                  <span className="text-xl font-bold text-blue-400 ml-2">${order.total.toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -163,112 +162,4 @@ export const Orders: React.FC = () => {
   );
 };
 
-const styles = {
-  container: {
-    maxWidth: '1200px',
-    margin: '0 auto',
-    padding: '40px 20px',
-  },
-  title: {
-    fontSize: '28px',
-    color: '#333',
-    marginBottom: '30px',
-  },
-  ordersList: {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    gap: '20px',
-  },
-  orderCard: {
-    border: '1px solid #e0e0e0',
-    borderRadius: '8px',
-    overflow: 'hidden',
-    backgroundColor: 'white',
-  },
-  orderHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '15px 20px',
-    backgroundColor: '#f5f5f5',
-    borderBottom: '1px solid #e0e0e0',
-  },
-  orderId: {
-    fontWeight: 'bold',
-    fontSize: '16px',
-    marginRight: '15px',
-  },
-  orderDate: {
-    color: '#666',
-    fontSize: '14px',
-  },
-  orderStatus: {
-    padding: '4px 12px',
-    borderRadius: '4px',
-    color: 'white',
-    fontSize: '12px',
-    fontWeight: 'bold',
-  },
-  orderItems: {
-    padding: '20px',
-  },
-  orderItem: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '20px',
-    padding: '15px 0',
-    borderBottom: '1px solid #f0f0f0',
-  },
-  itemImage: {
-    width: '80px',
-    height: '80px',
-    objectFit: 'contain' as const,
-  },
-  itemDetails: {
-    flex: 1,
-  },
-  itemTitle: {
-    fontSize: '14px',
-    marginBottom: '5px',
-  },
-  itemTotal: {
-    fontWeight: 'bold',
-    fontSize: '16px',
-    color: '#4fc3f7',
-  },
-  orderFooter: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    padding: '20px',
-    backgroundColor: '#fafafa',
-    borderTop: '1px solid #e0e0e0',
-  },
-  shippingInfo: {
-    fontSize: '13px',
-    color: '#666',
-  },
-  orderTotal: {
-    textAlign: 'right' as const,
-  },
-  totalAmount: {
-    fontSize: '20px',
-    fontWeight: 'bold',
-    color: '#4fc3f7',
-    marginLeft: '10px',
-  },
-  emptyState: {
-    textAlign: 'center' as const,
-    padding: '60px',
-    backgroundColor: '#f9f9f9',
-    borderRadius: '8px',
-  },
-  shopButton: {
-    display: 'inline-block',
-    marginTop: '20px',
-    backgroundColor: '#4fc3f7',
-    color: 'white',
-    textDecoration: 'none',
-    padding: '10px 20px',
-    borderRadius: '6px',
-  },
-} as const;
+export default Orders;

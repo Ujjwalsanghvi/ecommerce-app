@@ -17,7 +17,6 @@ export const Checkout: React.FC = () => {
     cvv: ''
   });
 
-  // Load saved address if exists
   useEffect(() => {
     const savedAddresses = localStorage.getItem(`addresses_${user?.id}`);
     if (savedAddresses) {
@@ -44,7 +43,6 @@ export const Checkout: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    // Create order
     const newOrder = {
       id: `ORD-${Date.now()}`,
       date: new Date().toISOString().split('T')[0],
@@ -65,18 +63,15 @@ export const Checkout: React.FC = () => {
       }
     };
     
-    // Save order to localStorage
     const existingOrders = localStorage.getItem(`orders_${user?.id}`);
     const orders = existingOrders ? JSON.parse(existingOrders) : [];
     orders.unshift(newOrder);
     localStorage.setItem(`orders_${user?.id}`, JSON.stringify(orders));
     
-    // Update wallet balance (deduct amount)
     const currentBalance = parseFloat(localStorage.getItem(`wallet_balance_${user?.id}`) || '0');
     const newBalance = currentBalance - getCartTotal();
     localStorage.setItem(`wallet_balance_${user?.id}`, newBalance.toString());
     
-    // Add transaction record
     const existingTransactions = localStorage.getItem(`wallet_transactions_${user?.id}`);
     const transactions = existingTransactions ? JSON.parse(existingTransactions) : [];
     transactions.unshift({
@@ -100,66 +95,66 @@ export const Checkout: React.FC = () => {
   }
 
   return (
-    <div className="checkout-container">
-      <div className="checkout-header">
-        <h1 className="checkout-title">Checkout</h1>
+    <div className="max-w-[1400px] mx-auto px-5 py-10 min-h-[calc(100vh-80px)] bg-gray-100 md:px-4 md:py-5">
+      <div className="mb-8">
+        <h1 className="text-3xl text-gray-800 font-bold md:text-2xl md:mb-5">Checkout</h1>
       </div>
 
-      <form onSubmit={handleSubmit} className="checkout-form">
+      <form onSubmit={handleSubmit} className="flex gap-8 flex-wrap md:flex-col md:gap-5">
         {/* Left Column - Shipping & Payment */}
-        <div className="checkout-left">
+        <div className="flex-[2] min-w-[280px] md:w-full md:min-w-auto">
           {/* Shipping Information */}
-          <div className="form-section">
-            <h2 className="section-title">Shipping Information</h2>
-            <div className="form-group">
-              <label className="form-label">Full Name</label>
+          <div className="bg-white rounded-xl p-6 mb-6 shadow-sm md:p-5 md:mb-4">
+            <h2 className="text-lg font-semibold text-gray-800 mb-5 pb-2 border-b-2 border-blue-400 md:text-base md:mb-4">Shipping Information</h2>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-600 mb-1.5">Full Name</label>
               <input
                 type="text"
                 name="fullName"
                 value={formData.fullName}
                 onChange={handleChange}
                 required
-                className="form-input"
+                className="w-full p-3 border border-gray-200 rounded-lg text-sm transition-all duration-300 outline-none focus:border-blue-400 focus:shadow-[0_0_0_3px_rgba(79,195,247,0.1)] md:p-2.5"
                 placeholder="Enter your full name"
               />
             </div>
             
-            <div className="form-group">
-              <label className="form-label">Address</label>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-600 mb-1.5">Address</label>
               <input
                 type="text"
                 name="address"
                 value={formData.address}
                 onChange={handleChange}
                 required
-                className="form-input"
+                className="w-full p-3 border border-gray-200 rounded-lg text-sm transition-all duration-300 outline-none focus:border-blue-400 focus:shadow-[0_0_0_3px_rgba(79,195,247,0.1)] md:p-2.5"
                 placeholder="Enter your address"
               />
             </div>
             
-            <div className="form-row">
-              <div className="form-group">
-                <label className="form-label">City</label>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-1 md:gap-3">
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-600 mb-1.5">City</label>
                 <input
                   type="text"
                   name="city"
                   value={formData.city}
                   onChange={handleChange}
                   required
-                  className="form-input"
+                  className="w-full p-3 border border-gray-200 rounded-lg text-sm transition-all duration-300 outline-none focus:border-blue-400 focus:shadow-[0_0_0_3px_rgba(79,195,247,0.1)] md:p-2.5"
                   placeholder="City"
                 />
               </div>
               
-              <div className="form-group">
-                <label className="form-label">Zip Code</label>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-600 mb-1.5">Zip Code</label>
                 <input
                   type="text"
                   name="zipCode"
                   value={formData.zipCode}
                   onChange={handleChange}
                   required
-                  className="form-input"
+                  className="w-full p-3 border border-gray-200 rounded-lg text-sm transition-all duration-300 outline-none focus:border-blue-400 focus:shadow-[0_0_0_3px_rgba(79,195,247,0.1)] md:p-2.5"
                   placeholder="Zip Code"
                 />
               </div>
@@ -167,44 +162,44 @@ export const Checkout: React.FC = () => {
           </div>
 
           {/* Payment Information */}
-          <div className="form-section">
-            <h2 className="section-title">Payment Information</h2>
-            <div className="form-group">
-              <label className="form-label">Card Number</label>
+          <div className="bg-white rounded-xl p-6 mb-6 shadow-sm md:p-5 md:mb-4">
+            <h2 className="text-lg font-semibold text-gray-800 mb-5 pb-2 border-b-2 border-blue-400 md:text-base md:mb-4">Payment Information</h2>
+            <div className="mb-4">
+              <label className="block text-sm font-medium text-gray-600 mb-1.5">Card Number</label>
               <input
                 type="text"
                 name="cardNumber"
                 value={formData.cardNumber}
                 onChange={handleChange}
                 required
-                className="form-input"
+                className="w-full p-3 border border-gray-200 rounded-lg text-sm transition-all duration-300 outline-none focus:border-blue-400 focus:shadow-[0_0_0_3px_rgba(79,195,247,0.1)] md:p-2.5"
                 placeholder="1234 5678 9012 3456"
               />
             </div>
             
-            <div className="form-row">
-              <div className="form-group">
-                <label className="form-label">Expiry Date</label>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-1 md:gap-3">
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-600 mb-1.5">Expiry Date</label>
                 <input
                   type="text"
                   name="expiryDate"
                   value={formData.expiryDate}
                   onChange={handleChange}
                   required
-                  className="form-input"
+                  className="w-full p-3 border border-gray-200 rounded-lg text-sm transition-all duration-300 outline-none focus:border-blue-400 focus:shadow-[0_0_0_3px_rgba(79,195,247,0.1)] md:p-2.5"
                   placeholder="MM/YY"
                 />
               </div>
               
-              <div className="form-group">
-                <label className="form-label">CVV</label>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-600 mb-1.5">CVV</label>
                 <input
                   type="text"
                   name="cvv"
                   value={formData.cvv}
                   onChange={handleChange}
                   required
-                  className="form-input"
+                  className="w-full p-3 border border-gray-200 rounded-lg text-sm transition-all duration-300 outline-none focus:border-blue-400 focus:shadow-[0_0_0_3px_rgba(79,195,247,0.1)] md:p-2.5"
                   placeholder="123"
                 />
               </div>
@@ -213,390 +208,40 @@ export const Checkout: React.FC = () => {
         </div>
 
         {/* Right Column - Order Summary */}
-        <div className="checkout-right">
-          <div className="order-summary">
-            <h2 className="summary-title">Order Summary</h2>
+        <div className="flex-1 min-w-[300px] md:w-full md:min-w-auto">
+          <div className="bg-white rounded-xl p-6 shadow-sm sticky top-[100px] md:static md:p-5">
+            <h2 className="text-lg font-semibold text-gray-800 mb-5 pb-2 border-b-2 border-blue-400 md:text-base md:mb-4">Order Summary</h2>
             
-            <div className="summary-items">
+            <div className="max-h-[400px] overflow-y-auto mb-4">
               {cart.map(item => (
-                <div key={item.product.id} className="summary-item">
-                  <div className="item-info">
-                    <img src={item.product.image} alt={item.product.title} className="item-image" />
-                    <div className="item-details">
-                      <div className="item-title">{item.product.title.substring(0, 40)}</div>
-                      <div className="item-quantity">Qty: {item.quantity}</div>
+                <div key={item.product.id} className="flex justify-between items-center py-3 border-b border-gray-100 last:border-b-0">
+                  <div className="flex gap-3 items-center flex-1">
+                    <img src={item.product.image} alt={item.product.title} className="w-12 h-12 object-contain bg-gray-50 rounded-md p-1" />
+                    <div className="flex-1">
+                      <div className="text-[13px] font-medium text-gray-800 mb-1 leading-tight">{item.product.title.substring(0, 40)}</div>
+                      <div className="text-xs text-gray-500">Qty: {item.quantity}</div>
                     </div>
                   </div>
-                  <div className="item-price">${(item.product.price * item.quantity).toFixed(2)}</div>
+                  <div className="text-sm font-semibold text-blue-400 ml-3">${(item.product.price * item.quantity).toFixed(2)}</div>
                 </div>
               ))}
             </div>
             
-            <div className="summary-divider"></div>
+            <div className="h-px bg-gray-200 my-4"></div>
             
-            <div className="summary-total">
-              <span className="total-label">Total:</span>
-              <span className="total-amount">${getCartTotal().toFixed(2)}</span>
+            <div className="flex justify-between items-center mb-5 pt-2">
+              <span className="text-lg font-semibold text-gray-800">Total:</span>
+              <span className="text-2xl font-bold text-blue-400">${getCartTotal().toFixed(2)}</span>
             </div>
             
-            <button type="submit" className="place-order-btn">
+            <button type="submit" className="w-full bg-green-500 text-white border-none py-3.5 rounded-lg text-base font-semibold cursor-pointer transition-all duration-300 hover:bg-green-600 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(76,175,80,0.3)] md:py-3 md:text-sm">
               Place Order (${getCartTotal().toFixed(2)})
             </button>
           </div>
         </div>
       </form>
-
-      <style>{`
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
-
-        .checkout-container {
-          max-width: 1400px;
-          margin: 0 auto;
-          padding: 40px 20px;
-          min-height: calc(100vh - 80px);
-          background-color: #f5f5f5;
-        }
-
-        .checkout-header {
-          margin-bottom: 30px;
-        }
-
-        .checkout-title {
-          font-size: 32px;
-          color: #333;
-          font-weight: bold;
-        }
-
-        .checkout-form {
-          display: flex;
-          gap: 30px;
-          flex-wrap: wrap;
-        }
-
-        /* Left Column */
-        .checkout-left {
-          flex: 2;
-          min-width: 280px;
-        }
-
-        /* Right Column */
-        .checkout-right {
-          flex: 1.2;
-          min-width: 300px;
-        }
-
-        /* Form Sections */
-        .form-section {
-          background-color: white;
-          border-radius: 12px;
-          padding: 24px;
-          margin-bottom: 24px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-
-        .section-title {
-          font-size: 18px;
-          font-weight: 600;
-          color: #333;
-          margin-bottom: 20px;
-          padding-bottom: 10px;
-          border-bottom: 2px solid #4fc3f7;
-        }
-
-        .form-group {
-          margin-bottom: 16px;
-        }
-
-        .form-label {
-          display: block;
-          font-size: 14px;
-          font-weight: 500;
-          color: #555;
-          margin-bottom: 6px;
-        }
-
-        .form-input {
-          width: 100%;
-          padding: 12px 14px;
-          border: 1px solid #e0e0e0;
-          border-radius: 8px;
-          font-size: 14px;
-          transition: all 0.3s;
-          outline: none;
-        }
-
-        .form-input:focus {
-          border-color: #4fc3f7;
-          box-shadow: 0 0 0 3px rgba(79, 195, 247, 0.1);
-        }
-
-        .form-row {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 16px;
-        }
-
-        /* Order Summary */
-        .order-summary {
-          background-color: white;
-          border-radius: 12px;
-          padding: 24px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-          position: sticky;
-          top: 100px;
-        }
-
-        .summary-title {
-          font-size: 18px;
-          font-weight: 600;
-          color: #333;
-          margin-bottom: 20px;
-          padding-bottom: 10px;
-          border-bottom: 2px solid #4fc3f7;
-        }
-
-        .summary-items {
-          max-height: 400px;
-          overflow-y: auto;
-          margin-bottom: 16px;
-        }
-
-        .summary-item {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 12px 0;
-          border-bottom: 1px solid #f0f0f0;
-        }
-
-        .summary-item:last-child {
-          border-bottom: none;
-        }
-
-        .item-info {
-          display: flex;
-          gap: 12px;
-          align-items: center;
-          flex: 1;
-        }
-
-        .item-image {
-          width: 50px;
-          height: 50px;
-          object-fit: contain;
-          background-color: #f8f9fa;
-          border-radius: 6px;
-          padding: 4px;
-        }
-
-        .item-details {
-          flex: 1;
-        }
-
-        .item-title {
-          font-size: 13px;
-          font-weight: 500;
-          color: #333;
-          margin-bottom: 4px;
-          line-height: 1.4;
-        }
-
-        .item-quantity {
-          font-size: 12px;
-          color: #666;
-        }
-
-        .item-price {
-          font-size: 14px;
-          font-weight: 600;
-          color: #4fc3f7;
-          margin-left: 12px;
-        }
-
-        .summary-divider {
-          height: 1px;
-          background-color: #e0e0e0;
-          margin: 16px 0;
-        }
-
-        .summary-total {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 20px;
-          padding-top: 8px;
-        }
-
-        .total-label {
-          font-size: 18px;
-          font-weight: 600;
-          color: #333;
-        }
-
-        .total-amount {
-          font-size: 24px;
-          font-weight: bold;
-          color: #4fc3f7;
-        }
-
-        .place-order-btn {
-          width: 100%;
-          background-color: #4caf50;
-          color: white;
-          border: none;
-          padding: 14px;
-          border-radius: 8px;
-          font-size: 16px;
-          font-weight: 600;
-          cursor: pointer;
-          transition: all 0.3s;
-        }
-
-        .place-order-btn:hover {
-          background-color: #45a049;
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
-        }
-
-        /* Scrollbar Styling */
-        .summary-items::-webkit-scrollbar {
-          width: 6px;
-        }
-
-        .summary-items::-webkit-scrollbar-track {
-          background: #f1f1f1;
-          border-radius: 10px;
-        }
-
-        .summary-items::-webkit-scrollbar-thumb {
-          background: #ccc;
-          border-radius: 10px;
-        }
-
-        .summary-items::-webkit-scrollbar-thumb:hover {
-          background: #aaa;
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-          .checkout-container {
-            padding: 20px 15px;
-          }
-
-          .checkout-title {
-            font-size: 24px;
-            margin-bottom: 20px;
-          }
-
-          .checkout-form {
-            flex-direction: column;
-            gap: 20px;
-          }
-
-          .checkout-left,
-          .checkout-right {
-            width: 100%;
-            min-width: auto;
-          }
-
-          .form-section {
-            padding: 20px;
-            margin-bottom: 16px;
-          }
-
-          .section-title {
-            font-size: 16px;
-            margin-bottom: 16px;
-          }
-
-          .form-row {
-            grid-template-columns: 1fr;
-            gap: 12px;
-          }
-
-          .form-input {
-            padding: 10px 12px;
-            font-size: 14px;
-          }
-
-          .order-summary {
-            padding: 20px;
-            position: static;
-            margin-bottom: 20px;
-          }
-
-          .summary-title {
-            font-size: 16px;
-            margin-bottom: 16px;
-          }
-
-          .summary-items {
-            max-height: 300px;
-          }
-
-          .item-image {
-            width: 45px;
-            height: 45px;
-          }
-
-          .item-title {
-            font-size: 12px;
-          }
-
-          .item-price {
-            font-size: 13px;
-          }
-
-          .total-label {
-            font-size: 16px;
-          }
-
-          .total-amount {
-            font-size: 20px;
-          }
-
-          .place-order-btn {
-            padding: 12px;
-            font-size: 15px;
-          }
-        }
-
-        /* Small phones */
-        @media (max-width: 480px) {
-          .checkout-container {
-            padding: 15px 12px;
-          }
-
-          .form-section {
-            padding: 16px;
-          }
-
-          .order-summary {
-            padding: 16px;
-          }
-
-          .item-info {
-            gap: 8px;
-          }
-
-          .item-image {
-            width: 40px;
-            height: 40px;
-          }
-
-          .item-title {
-            font-size: 11px;
-          }
-
-          .total-amount {
-            font-size: 18px;
-          }
-        }
-      `}</style>
     </div>
   );
 };
+
+export default Checkout;

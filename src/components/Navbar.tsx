@@ -3,11 +3,13 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useProfile } from '../contexts/ProfileContext';
 import { useCart } from '../contexts/CartContext';
+import { useWishlist } from '../contexts/WishlistContext';
 
 export const Navbar: React.FC = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const { profileData } = useProfile();
   const { getCartCount } = useCart();
+  const { getWishlistCount } = useWishlist();
   const navigate = useNavigate();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -25,7 +27,6 @@ export const Navbar: React.FC = () => {
     setIsProfileOpen(!isProfileOpen);
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -45,83 +46,84 @@ export const Navbar: React.FC = () => {
   const userName = profileData?.fullName || user?.name || 'User';
 
   return (
-    <nav className="navbar">
-      <div className="nav-container">
-        <Link to="/" className="logo">
+    <nav className="bg-[#1a1a2e] text-white py-4 sticky top-0 z-[1000]">
+      <div className="max-w-[1200px] mx-auto px-5 flex justify-between items-center flex-wrap">
+        <Link to="/" className="text-2xl font-bold text-white no-underline">
           E-Shop
         </Link>
         
-        {/* Mobile Menu Button */}
         <button 
-          className="mobile-menu-btn" 
+          className="hidden max-[768px]:block bg-none border-none text-white text-2xl cursor-pointer p-2"
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         >
-          <span className="menu-icon">{isMobileMenuOpen ? '✕' : '☰'}</span>
+          <span className="text-2xl">{isMobileMenuOpen ? '✕' : '☰'}</span>
         </button>
         
-        {/* Desktop Navigation */}
-        <div className="desktop-nav">
-          <Link to="/products" className="nav-link">
+        <div className="flex gap-5 items-center max-[768px]:hidden">
+          <Link to="/products" className="text-white no-underline px-3 py-2 rounded-md transition-colors duration-300 text-sm font-medium hover:bg-white/10">
             Products
+          </Link>
+
+          <Link to="/wishlist" className="text-white no-underline px-3 py-2 rounded-md transition-colors duration-300 text-sm font-medium hover:bg-white/10">
+            ❤️ Wishlist ({getWishlistCount()})
           </Link>
           
           {isAuthenticated ? (
             <>
-              <Link to="/cart" className="nav-link">
+              <Link to="/cart" className="text-white no-underline px-3 py-2 rounded-md transition-colors duration-300 text-sm font-medium hover:bg-white/10">
                 Cart ({getCartCount()})
               </Link>
               
-              {/* View Profile Link - Desktop */}
-              <Link to="/profile/view" className="view-profile-link">
+              <Link to="/profile/view" className="text-[#4fc3f7] no-underline px-4 py-2 rounded-md transition-all duration-300 text-sm font-medium bg-blue-400/10 border border-blue-400/30 hover:bg-blue-400/20 hover:-translate-y-0.5">
                 View Profile
               </Link>
               
-              <div className="profile-container" ref={dropdownRef}>
-                <button onClick={handleProfileClick} className="profile-btn">
-                  <div className="profile-icon">
+              <div className="relative" ref={dropdownRef}>
+                <button onClick={handleProfileClick} className="bg-none border-none cursor-pointer flex items-center gap-2 pl-1 pr-3 py-1 rounded-[30px] transition-colors duration-300 bg-white/10 hover:bg-white/20">
+                  <div className="w-9 h-9 rounded-full bg-[#4fc3f7] flex items-center justify-center overflow-hidden">
                     {profilePicture ? (
-                      <img src={profilePicture} alt="Profile" className="profile-img" />
+                      <img src={profilePicture} alt="Profile" className="w-full h-full object-cover" />
                     ) : (
-                      <span className="profile-icon-text">
+                      <span className="text-[#1a1a2e] text-lg font-bold">
                         {userName?.charAt(0).toUpperCase() || 'U'}
                       </span>
                     )}
                   </div>
-                  <span className="user-name">{userName.split(' ')[0]}</span>
-                  <span className="dropdown-arrow">{isProfileOpen ? '▲' : '▼'}</span>
+                  <span className="text-white text-sm font-medium">{userName.split(' ')[0]}</span>
+                  <span className="text-[10px] text-white ml-1">{isProfileOpen ? '▲' : '▼'}</span>
                 </button>
                 
                 {isProfileOpen && (
-                  <div className="dropdown-menu">
-                    <div className="user-info">
-                      <div className="user-avatar">
+                  <div className="absolute top-full right-0 mt-2.5 bg-white rounded-xl shadow-lg min-w-[260px] overflow-hidden z-[1000] animate-slideDown">
+                    <div className="flex items-center gap-3 p-4 bg-gray-50">
+                      <div className="w-12 h-12 rounded-full bg-[#4fc3f7] flex items-center justify-center text-2xl font-bold text-[#1a1a2e] overflow-hidden">
                         {profilePicture ? (
-                          <img src={profilePicture} alt="Profile" className="user-avatar-img" />
+                          <img src={profilePicture} alt="Profile" className="w-full h-full object-cover" />
                         ) : (
                           <span>{userName?.charAt(0).toUpperCase() || 'U'}</span>
                         )}
                       </div>
-                      <div className="user-details">
-                        <div className="user-name">{userName}</div>
-                        <div className="user-email">{user?.email}</div>
+                      <div className="flex-1">
+                        <div className="text-sm font-bold text-gray-800">{userName}</div>
+                        <div className="text-xs text-gray-500">{user?.email}</div>
                       </div>
                     </div>
-                    <div className="dropdown-divider"></div>
-                    <Link to="/profile/address" className="dropdown-item" onClick={() => setIsProfileOpen(false)}>
-                      <span className="dropdown-icon">📍</span>
+                    <div className="h-px bg-gray-200 my-1"></div>
+                    <Link to="/profile/address" className="flex items-center gap-3 px-4 py-3 text-gray-800 no-underline transition-colors duration-200 text-sm cursor-pointer hover:bg-gray-100" onClick={() => setIsProfileOpen(false)}>
+                      <span className="text-lg w-6">📍</span>
                       My Address
                     </Link>
-                    <Link to="/profile/orders" className="dropdown-item" onClick={() => setIsProfileOpen(false)}>
-                      <span className="dropdown-icon">📦</span>
+                    <Link to="/profile/orders" className="flex items-center gap-3 px-4 py-3 text-gray-800 no-underline transition-colors duration-200 text-sm cursor-pointer hover:bg-gray-100" onClick={() => setIsProfileOpen(false)}>
+                      <span className="text-lg w-6">📦</span>
                       My Orders
                     </Link>
-                    <Link to="/profile/wallet" className="dropdown-item" onClick={() => setIsProfileOpen(false)}>
-                      <span className="dropdown-icon">💰</span>
+                    <Link to="/profile/wallet" className="flex items-center gap-3 px-4 py-3 text-gray-800 no-underline transition-colors duration-200 text-sm cursor-pointer hover:bg-gray-100" onClick={() => setIsProfileOpen(false)}>
+                      <span className="text-lg w-6">💰</span>
                       My Wallet
                     </Link>
-                    <div className="dropdown-divider"></div>
-                    <button onClick={handleLogout} className="dropdown-logout">
-                      <span className="dropdown-icon">🚪</span>
+                    <div className="h-px bg-gray-200 my-1"></div>
+                    <button onClick={handleLogout} className="flex items-center gap-3 w-full px-4 py-3 text-red-500 no-underline transition-colors duration-200 text-sm cursor-pointer bg-none border-none text-left hover:bg-red-50">
+                      <span className="text-lg w-6">🚪</span>
                       Logout
                     </button>
                   </div>
@@ -130,52 +132,53 @@ export const Navbar: React.FC = () => {
             </>
           ) : (
             <>
-              <Link to="/login" className="nav-link">
+              <Link to="/login" className="text-white no-underline px-3 py-2 rounded-md transition-colors duration-300 text-sm font-medium hover:bg-white/10">
                 Login
               </Link>
-              <Link to="/signup" className="nav-link">
+              <Link to="/signup" className="text-white no-underline px-3 py-2 rounded-md transition-colors duration-300 text-sm font-medium hover:bg-white/10">
                 Signup
               </Link>
             </>
           )}
         </div>
         
-        {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
-          <div className="mobile-nav" ref={mobileMenuRef}>
-            <Link to="/products" className="mobile-link" onClick={() => setIsMobileMenuOpen(false)}>
+          <div className="absolute top-full left-0 right-0 bg-[#1a1a2e] p-5 flex flex-col gap-4 z-[999] border-t border-white/10" ref={mobileMenuRef}>
+            <Link to="/products" className="text-white no-underline py-2.5 text-base text-center bg-white/10 rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>
               Products
+            </Link>
+
+            <Link to="/wishlist" className="text-white no-underline py-2.5 text-base text-center bg-white/10 rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>
+              ❤️ Wishlist ({getWishlistCount()})
             </Link>
             
             {isAuthenticated ? (
               <>
-                <Link to="/cart" className="mobile-link" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link to="/cart" className="text-white no-underline py-2.5 text-base text-center bg-white/10 rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>
                   Cart ({getCartCount()})
                 </Link>
-                {/* View Profile is NOT here - removed from mobile menu */}
-                <Link to="/profile/address" className="mobile-link" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link to="/profile/address" className="text-white no-underline py-2.5 text-base text-center bg-white/10 rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>
                   My Address
                 </Link>
-                <Link to="/profile/orders" className="mobile-link" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link to="/profile/orders" className="text-white no-underline py-2.5 text-base text-center bg-white/10 rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>
                   My Orders
                 </Link>
-                <Link to="/profile/wallet" className="mobile-link" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link to="/profile/wallet" className="text-white no-underline py-2.5 text-base text-center bg-white/10 rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>
                   My Wallet
                 </Link>
-                {/* View Profile added here - below My Wallet */}
-                <Link to="/profile/view" className="mobile-link view-profile-mobile" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link to="/profile/view" className="text- no-underline py-2.5 text-base text-center bg-blue-400/20 border border-blue-400/30 text-[#4fc3f7] rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>
                   👤 View Profile
                 </Link>
-                <button onClick={handleLogout} className="mobile-logout">
+                <button onClick={handleLogout} className="bg-red-500/20 text-red-500 border-none py-2.5 rounded-lg text-base cursor-pointer text-center">
                   Sign out
                 </button>
               </>
             ) : (
               <>
-                <Link to="/login" className="mobile-link" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link to="/login" className="text-white no-underline py-2.5 text-base text-center bg-white/10 rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>
                   Login
                 </Link>
-                <Link to="/signup" className="mobile-link" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link to="/signup" className="text-white no-underline py-2.5 text-base text-center bg-white/10 rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>
                   Signup
                 </Link>
               </>
@@ -185,282 +188,6 @@ export const Navbar: React.FC = () => {
       </div>
 
       <style>{`
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
-
-        .navbar {
-          background-color: #1a1a2e;
-          color: white;
-          padding: 1rem 0;
-          position: sticky;
-          top: 0;
-          z-index: 1000;
-        }
-
-        .nav-container {
-          max-width: 1200px;
-          margin: 0 auto;
-          padding: 0 20px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          flex-wrap: wrap;
-        }
-
-        .logo {
-          font-size: 1.5rem;
-          font-weight: bold;
-          color: white;
-          text-decoration: none;
-        }
-
-        .mobile-menu-btn {
-          display: none;
-          background: none;
-          border: none;
-          color: white;
-          font-size: 24px;
-          cursor: pointer;
-          padding: 8px;
-        }
-
-        .desktop-nav {
-          display: flex;
-          gap: 20px;
-          align-items: center;
-        }
-
-        .nav-link {
-          color: white;
-          text-decoration: none;
-          padding: 8px 12px;
-          border-radius: 6px;
-          transition: background-color 0.3s;
-          font-size: 14px;
-          font-weight: 500;
-        }
-
-        .nav-link:hover {
-          background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        .view-profile-link {
-          color: #4fc3f7;
-          text-decoration: none;
-          padding: 8px 16px;
-          border-radius: 6px;
-          transition: all 0.3s;
-          font-size: 14px;
-          font-weight: 500;
-          background-color: rgba(79, 195, 247, 0.1);
-          border: 1px solid rgba(79, 195, 247, 0.3);
-        }
-
-        .view-profile-link:hover {
-          background-color: rgba(79, 195, 247, 0.2);
-          transform: translateY(-2px);
-        }
-
-        .profile-container {
-          position: relative;
-        }
-
-        .profile-btn {
-          background: none;
-          border: none;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          padding: 4px 12px 4px 4px;
-          borderRadius: 30px;
-          transition: background-color 0.3s;
-          background-color: rgba(255, 255, 255, 0.1);
-          border-radius: 30px;
-        }
-
-        .profile-btn:hover {
-          background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .profile-icon {
-          width: 36px;
-          height: 36px;
-          border-radius: 50%;
-          background-color: #4fc3f7;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          overflow: hidden;
-        }
-
-        .profile-img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .profile-icon-text {
-          color: #1a1a2e;
-          font-size: 18px;
-          font-weight: bold;
-        }
-
-        .user-name {
-          color: white;
-          font-size: 14px;
-          font-weight: 500;
-        }
-
-        .dropdown-arrow {
-          font-size: 10px;
-          color: white;
-          margin-left: 4px;
-        }
-
-        .dropdown-menu {
-          position: absolute;
-          top: 100%;
-          right: 0;
-          margin-top: 10px;
-          background-color: white;
-          border-radius: 12px;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-          min-width: 260px;
-          overflow: hidden;
-          z-index: 1000;
-          animation: slideDown 0.2s ease-out;
-        }
-
-        .user-info {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 16px;
-          background-color: #f8f9fa;
-        }
-
-        .user-avatar {
-          width: 48px;
-          height: 48px;
-          border-radius: 50%;
-          background-color: #4fc3f7;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 24px;
-          font-weight: bold;
-          color: #1a1a2e;
-          overflow: hidden;
-        }
-
-        .user-avatar-img {
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-        }
-
-        .user-details {
-          flex: 1;
-        }
-
-        .user-email {
-          font-size: 12px;
-          color: #666;
-        }
-
-        .dropdown-item {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 12px 16px;
-          color: #333;
-          text-decoration: none;
-          transition: background-color 0.2s;
-          font-size: 14px;
-          cursor: pointer;
-        }
-
-        .dropdown-item:hover {
-          background-color: #f5f5f5;
-        }
-
-        .dropdown-icon {
-          font-size: 18px;
-          width: 24px;
-        }
-
-        .dropdown-divider {
-          height: 1px;
-          background-color: #e0e0e0;
-          margin: 4px 0;
-        }
-
-        .dropdown-logout {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          width: 100%;
-          padding: 12px 16px;
-          color: #f44336;
-          text-decoration: none;
-          transition: background-color 0.2s;
-          font-size: 14px;
-          cursor: pointer;
-          background: none;
-          border: none;
-          text-align: left;
-        }
-
-        .dropdown-logout:hover {
-          background-color: #ffebee;
-        }
-
-        /* Mobile Navigation */
-        .mobile-nav {
-          position: absolute;
-          top: 100%;
-          left: 0;
-          right: 0;
-          background-color: #1a1a2e;
-          padding: 20px;
-          display: flex;
-          flex-direction: column;
-          gap: 15px;
-          z-index: 999;
-          border-top: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .mobile-link {
-          color: white;
-          text-decoration: none;
-          padding: 10px;
-          font-size: 16px;
-          text-align: center;
-          background-color: rgba(255,255,255,0.1);
-          border-radius: 8px;
-        }
-
-        .view-profile-mobile {
-          background-color: rgba(79, 195, 247, 0.2);
-          border: 1px solid rgba(79, 195, 247, 0.3);
-          color: #4fc3f7;
-        }
-
-        .mobile-logout {
-          background-color: rgba(244, 67, 54, 0.2);
-          color: #f44336;
-          border: none;
-          padding: 10px;
-          border-radius: 8px;
-          font-size: 16px;
-          cursor: pointer;
-          text-align: center;
-        }
-
         @keyframes slideDown {
           from {
             opacity: 0;
@@ -471,22 +198,8 @@ export const Navbar: React.FC = () => {
             transform: translateY(0);
           }
         }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-          .desktop-nav {
-            display: none;
-          }
-          
-          .mobile-menu-btn {
-            display: block;
-          }
-        }
-
-        @media (min-width: 769px) {
-          .mobile-nav {
-            display: none;
-          }
+        .animate-slideDown {
+          animation: slideDown 0.2s ease-out;
         }
       `}</style>
     </nav>

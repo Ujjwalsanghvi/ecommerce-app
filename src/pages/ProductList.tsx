@@ -1,3 +1,4 @@
+import { useWishlist } from '../contexts/WishlistContext';
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
@@ -14,6 +15,8 @@ export const ProductList: React.FC = () => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const { addToCart } = useCart();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  
 
   useEffect(() => {
     fetchProducts();
@@ -74,6 +77,16 @@ export const ProductList: React.FC = () => {
     setFilteredProducts(filtered);
   };
 
+  const handleFavoriteToggle = (product: Product, e: React.MouseEvent) => {
+  e.preventDefault();
+  e.stopPropagation();
+  if (isInWishlist(product.id)) {
+    removeFromWishlist(product.id);
+  } else {
+    addToWishlist(product);
+  }
+};
+
   const handleCategorySelect = (category: string) => {
     setSelectedCategory(category);
     setIsDropdownOpen(false);
@@ -128,7 +141,31 @@ export const ProductList: React.FC = () => {
 
       <div className="products-grid">
         {filteredProducts.map(product => (
-          <div key={product.id} className="product-card">
+          <div key={product.id} className="product-card" style={{transform:isInWishlist(product.id) ?'translateY(-4px)':'initial'}}>
+            <button
+  onClick={(e) => handleFavoriteToggle(product, e)}
+  style={{
+    position: 'absolute',
+    top: '10px',
+    right: '10px',
+    background: 'white',
+    border: 'none',
+    borderRadius: '50%',
+    // visibility: 'visible',
+    width: '32px',
+    height: '32px',
+    opacity: 1,
+    fontSize: '18px',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+    zIndex: 1,
+  }}
+>
+  {isInWishlist(product.id) ? '❤️' : '🤍'}
+</button>
             <Link to={`/product/${product.id}`} className="product-link">
               <div className="product-image-wrapper">
                 <img src={product.image} alt={product.title} className="product-image" />
@@ -290,8 +327,10 @@ export const ProductList: React.FC = () => {
         }
 
         .product-card:hover {
-          transform: translateY(-4px);
+          transform: translateY(-4px) !important;
           box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+          opacity: 1;
+          visibility: visible;
         }
 
         .product-link {
