@@ -7,89 +7,184 @@ export const Cart: React.FC = () => {
 
   if (cart.length === 0) {
     return (
-      <div className="empty-cart">
-        <h2>Your cart is empty</h2>
-        <Link to="/products" className="continue-shopping">
+      <div className="text-center p-[50px] min-h-[calc(100vh-80px)] bg-[#f5f5f5] max-md:p-[30px]">
+        <h2 className="text-[#333] mb-5">Your cart is empty</h2>
+
+        <Link
+          to="/products"
+          className="inline-block mt-5 px-6 py-3 bg-[#4fc3f7] text-white no-underline rounded-[8px] transition-all duration-300 hover:bg-[#45b5e6] hover:-translate-y-[2px]"
+        >
           Continue Shopping
         </Link>
-        <style>{`
-          .empty-cart {
-            text-align: center;
-            padding: 50px;
-            min-height: calc(100vh - 80px);
-            background-color: #f5f5f5;
-          }
-          .empty-cart h2 {
-            color: #333;
-            margin-bottom: 20px;
-          }
-          .continue-shopping {
-            display: inline-block;
-            margin-top: 20px;
-            padding: 12px 24px;
-            background-color: #4fc3f7;
-            color: white;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.3s;
-          }
-          .continue-shopping:hover {
-            background-color: #45b5e6;
-            transform: translateY(-2px);
-          }
-          @media (max-width: 768px) {
-            .empty-cart {
-              padding: 30px;
-            }
-          }
-        `}</style>
       </div>
     );
   }
 
   return (
-    <div className="cart-page">
-      <div className="cart-container">
-        <h1 className="cart-title">Shopping Cart</h1>
-        
-        <div className="cart-content">
+    <div className="min-h-[calc(100vh-80px)] bg-[#f5f5f5]">
+      <div className="max-w-[1400px] mx-auto px-5 py-10 max-md:px-[15px] max-md:py-5 max-[480px]:px-3 max-[480px]:py-[15px]">
+        <h1 className="text-[32px] text-[#333] mb-[30px] font-bold max-md:text-2xl max-md:mb-5 max-[480px]:text-[22px]">
+          Shopping Cart
+        </h1>
+
+        {/* Desktop Layout - Side by Side */}
+        <div className="flex gap-[30px] max-md:flex-col max-md:gap-5">
           {/* Cart Items Section */}
-          <div className="cart-items-section">
-            <div className="cart-items">
-              {cart.map(item => (
-                <div key={item.product.id} className="cart-item">
-                  <img src={item.product.image} alt={item.product.title} className="item-image" />
-                  
-                  <div className="item-details">
-                    <Link to={`/product/${item.product.id}`} className="item-title">
+          <div className="flex-[2] w-full">
+            <div className="bg-white rounded-[12px] overflow-hidden shadow-[0_2px_8px_rgba(0,0,0,0.06)]">
+              {cart.map((item) => (
+                <div
+                  key={item.product.id}
+                  className="
+                    grid
+                    grid-cols-[100px_2fr_150px_100px_80px]
+                    items-center
+                    gap-[15px]
+                    p-5
+                    border-b border-[#f0f0f0]
+                    transition-colors duration-300
+                    hover:bg-[#fafafa]
+                    last:border-b-0
+
+                    max-md:grid-cols-1
+                    max-md:gap-3
+                    max-md:text-center
+                    max-md:p-4
+
+                    max-[480px]:p-3
+                  "
+                >
+                  <img
+                    src={item.product.image}
+                    alt={item.product.title}
+                    className="
+                      w-20
+                      h-20
+                      object-contain
+
+                      max-md:mx-auto
+                      max-md:w-[100px]
+                      max-md:h-[100px]
+
+                      max-[480px]:w-20
+                      max-[480px]:h-20
+                    "
+                  />
+
+                  <div className="flex flex-col gap-2 max-md:items-center">
+                    <Link
+                      to={`/product/${item.product.id}`}
+                      className="
+                        text-[#333]
+                        no-underline
+                        text-[15px]
+                        font-medium
+                        leading-[1.4]
+                        hover:text-[#4fc3f7]
+
+                        max-md:text-[14px]
+                        max-[480px]:text-[13px]
+                      "
+                    >
                       {item.product.title}
                     </Link>
-                    <div className="item-price">${item.product.price.toFixed(2)}</div>
+
+                    <div className="text-base font-semibold text-[#4fc3f7] max-[480px]:text-[15px]">
+                      ${item.product.price.toFixed(2)}
+                    </div>
                   </div>
-                  
-                  <div className="item-quantity">
+
+                  <div className="flex items-center gap-3 max-md:justify-center">
                     <button
-                      onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                      className="quantity-btn"
+                      onClick={() =>
+                        updateQuantity(item.product.id, item.quantity - 1)
+                      }
+                      className="
+                        w-8
+                        h-8
+                        bg-[#f0f0f0]
+                        border-none
+                        rounded-[6px]
+                        cursor-pointer
+                        text-[18px]
+                        font-bold
+                        transition-all
+                        duration-300
+                        hover:bg-[#e0e0e0]
+                        hover:scale-[1.05]
+
+                        max-md:w-9
+                        max-md:h-9
+                        max-md:text-[20px]
+
+                        max-[480px]:w-8
+                        max-[480px]:h-8
+                        max-[480px]:text-[18px]
+                      "
                     >
                       -
                     </button>
-                    <span className="quantity">{item.quantity}</span>
+
+                    <span className="text-base font-medium min-w-[30px] text-center">
+                      {item.quantity}
+                    </span>
+
                     <button
-                      onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                      className="quantity-btn"
+                      onClick={() =>
+                        updateQuantity(item.product.id, item.quantity + 1)
+                      }
+                      className="
+                        w-8
+                        h-8
+                        bg-[#f0f0f0]
+                        border-none
+                        rounded-[6px]
+                        cursor-pointer
+                        text-[18px]
+                        font-bold
+                        transition-all
+                        duration-300
+                        hover:bg-[#e0e0e0]
+                        hover:scale-[1.05]
+
+                        max-md:w-9
+                        max-md:h-9
+                        max-md:text-[20px]
+
+                        max-[480px]:w-8
+                        max-[480px]:h-8
+                        max-[480px]:text-[18px]
+                      "
                     >
                       +
                     </button>
                   </div>
-                  
-                  <div className="item-total">
+
+                  <div className="text-[18px] font-bold text-[#4fc3f7] max-md:text-center max-[480px]:text-base">
                     ${(item.product.price * item.quantity).toFixed(2)}
                   </div>
-                  
+
                   <button
                     onClick={() => removeFromCart(item.product.id)}
-                    className="remove-btn"
+                    className="
+                      px-4
+                      py-2
+                      bg-[#f44336]
+                      text-white
+                      border-none
+                      rounded-[6px]
+                      cursor-pointer
+                      transition-all
+                      duration-300
+                      text-[13px]
+                      font-medium
+                      hover:bg-[#d32f2f]
+                      hover:scale-[1.02]
+
+                      max-md:w-[100px]
+                      max-md:mx-auto
+                      max-md:py-2
+                    "
                   >
                     Remove
                   </button>
@@ -97,406 +192,111 @@ export const Cart: React.FC = () => {
               ))}
             </div>
           </div>
-          
-          {/* Order Summary Section - Below cart on mobile, side by side on desktop */}
-          <div className="order-summary-section">
-            <div className="order-summary">
-              <h3 className="summary-title">Order Summary</h3>
-              <div className="summary-row">
+
+          {/* Order Summary Section */}
+          <div className="flex-1 w-full">
+            <div
+              className="
+                bg-white
+                rounded-[12px]
+                p-6
+                shadow-[0_2px_8px_rgba(0,0,0,0.06)]
+                sticky
+                top-[100px]
+
+                max-md:static
+                max-md:p-5
+
+                max-[480px]:p-4
+              "
+            >
+              <h3
+                className="
+                  text-[18px]
+                  font-semibold
+                  text-[#333]
+                  mb-5
+                  pb-[10px]
+                  border-b-2
+                  border-[#4fc3f7]
+
+                  max-md:text-base
+                "
+              >
+                Order Summary
+              </h3>
+
+              <div className="flex justify-between mb-[15px] text-[15px] text-[#666] max-md:text-[14px]">
                 <span>Subtotal:</span>
                 <span>${getCartTotal().toFixed(2)}</span>
               </div>
-              <div className="summary-row">
+
+              <div className="flex justify-between mb-[15px] text-[15px] text-[#666] max-md:text-[14px]">
                 <span>Shipping:</span>
                 <span>Free</span>
               </div>
-              <div className="summary-total">
+
+              <div className="flex justify-between mt-[15px] pt-[15px] border-t border-[#e0e0e0] text-[18px] font-bold text-[#333] max-md:text-base">
                 <span>Total:</span>
-                <span>${getCartTotal().toFixed(2)}</span>
+
+                <span className="text-[#4fc3f7] text-[20px] max-md:text-[18px]">
+                  ${getCartTotal().toFixed(2)}
+                </span>
               </div>
-              <button onClick={clearCart} className="clear-cart-btn">
+
+              <button
+                onClick={clearCart}
+                className="
+                  w-full
+                  py-3
+                  bg-[#ff9800]
+                  text-white
+                  border-none
+                  rounded-[8px]
+                  cursor-pointer
+                  text-[15px]
+                  font-semibold
+                  mt-5
+                  transition-all
+                  duration-300
+                  hover:bg-[#f57c00]
+                  hover:-translate-y-[2px]
+
+                  max-md:py-[10px]
+                  max-md:text-[14px]
+                "
+              >
                 Clear Cart
               </button>
-              <Link to="/checkout" className="checkout-btn">
+
+              <Link
+                to="/checkout"
+                className="
+                  block
+                  text-center
+                  mt-3
+                  py-3
+                  bg-[#4caf50]
+                  text-white
+                  no-underline
+                  rounded-[8px]
+                  text-[15px]
+                  font-semibold
+                  transition-all
+                  duration-300
+                  hover:bg-[#45a049]
+                  hover:-translate-y-[2px]
+
+                  max-md:py-[10px]
+                  max-md:text-[14px]
+                "
+              >
                 Proceed to Checkout
               </Link>
             </div>
           </div>
         </div>
       </div>
-
-      <style>{`
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
-
-        .cart-page {
-          min-height: calc(100vh - 80px);
-          background-color: #f5f5f5;
-        }
-
-        .cart-container {
-          max-width: 1400px;
-          margin: 0 auto;
-          padding: 40px 20px;
-        }
-
-        .cart-title {
-          font-size: 32px;
-          color: #333;
-          margin-bottom: 30px;
-          font-weight: bold;
-        }
-
-        /* Desktop Layout - Side by Side */
-        .cart-content {
-          display: flex;
-          gap: 30px;
-        }
-
-        .cart-items-section {
-          flex: 2;
-        }
-
-        .order-summary-section {
-          flex: 1;
-        }
-
-        /* Cart Items */
-        .cart-items {
-          background-color: white;
-          border-radius: 12px;
-          overflow: hidden;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-        }
-
-        .cart-item {
-          display: grid;
-          grid-template-columns: 100px 2fr 150px 100px 80px;
-          align-items: center;
-          gap: 15px;
-          padding: 20px;
-          border-bottom: 1px solid #f0f0f0;
-          transition: background-color 0.3s;
-        }
-
-        .cart-item:hover {
-          background-color: #fafafa;
-        }
-
-        .cart-item:last-child {
-          border-bottom: none;
-        }
-
-        .item-image {
-          width: 80px;
-          height: 80px;
-          object-fit: contain;
-        }
-
-        .item-details {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-
-        .item-title {
-          color: #333;
-          text-decoration: none;
-          font-size: 15px;
-          font-weight: 500;
-          line-height: 1.4;
-        }
-
-        .item-title:hover {
-          color: #4fc3f7;
-        }
-
-        .item-price {
-          font-size: 16px;
-          font-weight: 600;
-          color: #4fc3f7;
-        }
-
-        .item-quantity {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .quantity-btn {
-          width: 32px;
-          height: 32px;
-          background-color: #f0f0f0;
-          border: none;
-          border-radius: 6px;
-          cursor: pointer;
-          font-size: 18px;
-          font-weight: bold;
-          transition: all 0.3s;
-        }
-
-        .quantity-btn:hover {
-          background-color: #e0e0e0;
-          transform: scale(1.05);
-        }
-
-        .quantity {
-          font-size: 16px;
-          font-weight: 500;
-          min-width: 30px;
-          text-align: center;
-        }
-
-        .item-total {
-          font-size: 18px;
-          font-weight: bold;
-          color: #4fc3f7;
-        }
-
-        .remove-btn {
-          padding: 8px 16px;
-          background-color: #f44336;
-          color: white;
-          border: none;
-          border-radius: 6px;
-          cursor: pointer;
-          transition: all 0.3s;
-          font-size: 13px;
-          font-weight: 500;
-        }
-
-        .remove-btn:hover {
-          background-color: #d32f2f;
-          transform: scale(1.02);
-        }
-
-        /* Order Summary */
-        .order-summary {
-          background-color: white;
-          border-radius: 12px;
-          padding: 24px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-          position: sticky;
-          top: 100px;
-        }
-
-        .summary-title {
-          font-size: 18px;
-          font-weight: 600;
-          color: #333;
-          margin-bottom: 20px;
-          padding-bottom: 10px;
-          border-bottom: 2px solid #4fc3f7;
-        }
-
-        .summary-row {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 15px;
-          font-size: 15px;
-          color: #666;
-        }
-
-        .summary-total {
-          display: flex;
-          justify-content: space-between;
-          margin-top: 15px;
-          padding-top: 15px;
-          border-top: 1px solid #e0e0e0;
-          font-size: 18px;
-          font-weight: bold;
-          color: #333;
-        }
-
-        .summary-total span:last-child {
-          color: #4fc3f7;
-          font-size: 20px;
-        }
-
-        .clear-cart-btn {
-          width: 100%;
-          padding: 12px;
-          background-color: #ff9800;
-          color: white;
-          border: none;
-          border-radius: 8px;
-          cursor: pointer;
-          font-size: 15px;
-          font-weight: 600;
-          margin-top: 20px;
-          transition: all 0.3s;
-        }
-
-        .clear-cart-btn:hover {
-          background-color: #f57c00;
-          transform: translateY(-2px);
-        }
-
-        .checkout-btn {
-          display: block;
-          text-align: center;
-          margin-top: 12px;
-          padding: 12px;
-          background-color: #4caf50;
-          color: white;
-          text-decoration: none;
-          border-radius: 8px;
-          font-size: 15px;
-          font-weight: 600;
-          transition: all 0.3s;
-        }
-
-        .checkout-btn:hover {
-          background-color: #45a049;
-          transform: translateY(-2px);
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-          .cart-container {
-            padding: 20px 15px;
-          }
-
-          .cart-title {
-            font-size: 24px;
-            margin-bottom: 20px;
-          }
-
-          /* Stack layout on mobile */
-          .cart-content {
-            flex-direction: column;
-            gap: 20px;
-          }
-
-          .cart-items-section {
-            width: 100%;
-          }
-
-          .order-summary-section {
-            width: 100%;
-          }
-
-          /* Cart item becomes column layout */
-          .cart-item {
-            grid-template-columns: 1fr;
-            gap: 12px;
-            text-align: center;
-            padding: 16px;
-          }
-
-          .item-image {
-            margin: 0 auto;
-            width: 100px;
-            height: 100px;
-          }
-
-          .item-details {
-            align-items: center;
-          }
-
-          .item-title {
-            font-size: 14px;
-          }
-
-          .item-price {
-            font-size: 16px;
-          }
-
-          .item-quantity {
-            justify-content: center;
-          }
-
-          .quantity-btn {
-            width: 36px;
-            height: 36px;
-            font-size: 20px;
-          }
-
-          .item-total {
-            font-size: 18px;
-            text-align: center;
-          }
-
-          .remove-btn {
-            width: 100px;
-            margin: 0 auto;
-            padding: 8px;
-          }
-
-          /* Order summary on mobile */
-          .order-summary {
-            position: static;
-            padding: 20px;
-          }
-
-          .summary-title {
-            font-size: 16px;
-          }
-
-          .summary-row {
-            font-size: 14px;
-          }
-
-          .summary-total {
-            font-size: 16px;
-          }
-
-          .summary-total span:last-child {
-            font-size: 18px;
-          }
-
-          .clear-cart-btn,
-          .checkout-btn {
-            padding: 10px;
-            font-size: 14px;
-          }
-        }
-
-        /* Small phones */
-        @media (max-width: 480px) {
-          .cart-container {
-            padding: 15px 12px;
-          }
-
-          .cart-title {
-            font-size: 22px;
-          }
-
-          .cart-item {
-            padding: 12px;
-          }
-
-          .item-image {
-            width: 80px;
-            height: 80px;
-          }
-
-          .item-title {
-            font-size: 13px;
-          }
-
-          .item-price {
-            font-size: 15px;
-          }
-
-          .quantity-btn {
-            width: 32px;
-            height: 32px;
-            font-size: 18px;
-          }
-
-          .item-total {
-            font-size: 16px;
-          }
-
-          .order-summary {
-            padding: 16px;
-          }
-        }
-      `}</style>
     </div>
   );
 };
