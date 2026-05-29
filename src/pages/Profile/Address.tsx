@@ -1,23 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { IAddress } from '../../types/Address';
 
-interface Address {
-  id: number;
-  fullName: string;
-  street: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
-  phone: string;
-  isDefault: boolean;
-}
+
 
 export const Address: React.FC = () => {
   const { user } = useAuth();
-  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [addresses, setAddresses] = useState<IAddress[]>([]);
   const [showForm, setShowForm] = useState(false);
-  const [editingAddress, setEditingAddress] = useState<Address | null>(null);
+  const [editingAddress, setEditingAddress] = useState<IAddress | null>(null);
   const [formData, setFormData] = useState({
     fullName: '',
     street: '',
@@ -55,7 +46,7 @@ export const Address: React.FC = () => {
     }
   };
 
-  const saveAddresses = (newAddresses: Address[]) => {
+  const saveAddresses = (newAddresses: IAddress[]) => {
     setAddresses(newAddresses);
     localStorage.setItem(`addresses_${user?.id}`, JSON.stringify(newAddresses));
   };
@@ -70,7 +61,7 @@ export const Address: React.FC = () => {
       );
       saveAddresses(updatedAddresses);
     } else {
-      const newAddress: Address = {
+      const newAddress: IAddress = {
         id: Date.now(),
         ...formData,
         isDefault: addresses.length === 0
@@ -90,7 +81,7 @@ export const Address: React.FC = () => {
     });
   };
 
-  const handleEdit = (address: Address) => {
+  const handleEdit = (address: IAddress) => {
     setEditingAddress(address);
     setFormData({
       fullName: address.fullName,

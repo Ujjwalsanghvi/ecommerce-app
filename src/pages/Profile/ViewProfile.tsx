@@ -2,52 +2,12 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useProfile } from '../../contexts/ProfileContext';
 import { Link } from 'react-router-dom';
+import { IAddress } from '../../types/Address';
+import { ProfileData } from '../../types/ProfileData';
+import { Transaction } from '../../types/Transaction';
+import { ImpOrder } from '../../types/ImpOrder';
 
-interface ProfileData {
-  fullName: string;
-  email: string;
-  phone: string;
-  dateOfBirth: string;
-  gender: string;
-  bio: string;
-  profilePicture: string;
-  joinDate: string;
-}
 
-interface Order {
-  id: string;
-  date: string;
-  total: number;
-  status: string;
-  items: Array<{
-    id: number;
-    title: string;
-    price: number;
-    quantity: number;
-    image: string;
-  }>;
-}
-
-interface Address {
-  id: number;
-  fullName: string;
-  street: string;
-  city: string;
-  state: string;
-  zipCode: string;
-  country: string;
-  phone: string;
-  isDefault: boolean;
-}
-
-interface Transaction {
-  id: string;
-  date: string;
-  type: 'credit' | 'debit';
-  amount: number;
-  description: string;
-  status: string;
-}
 
 export const ViewProfile: React.FC = () => {
   const { user, logout } = useAuth();
@@ -59,8 +19,8 @@ export const ViewProfile: React.FC = () => {
   const [editData, setEditData] = useState<ProfileData>(profileData);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [orders, setOrders] = useState<Order[]>([]);
-  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [orders, setOrders] = useState<ImpOrder[]>([]);
+  const [addresses, setAddresses] = useState<IAddress[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [walletBalance, setWalletBalance] = useState(0);
 
@@ -75,7 +35,7 @@ export const ViewProfile: React.FC = () => {
     if (savedOrders) {
       setOrders(JSON.parse(savedOrders));
     } else {
-      const demoOrders: Order[] = [
+      const demoOrders: ImpOrder[] = [
         {
           id: 'ORD-001',
           date: '2024-05-10',
@@ -117,7 +77,7 @@ export const ViewProfile: React.FC = () => {
     if (savedAddresses) {
       setAddresses(JSON.parse(savedAddresses));
     } else {
-      const demoAddresses: Address[] = [
+      const demoAddresses: IAddress[] = [
         {
           id: 1,
           fullName: user?.name || 'John Doe',
@@ -229,9 +189,12 @@ export const ViewProfile: React.FC = () => {
   const latestTransactions = transactions.slice(0, 1);
 
   return (
-    <div className="flex min-h-[calc(100vh-80px)] bg-gray-100">
+    // CHANGED: added flex-col (mobile) md:flex-row (desktop)
+    <div className="flex flex-col md:flex-row min-h-[calc(100vh-80px)] bg-gray-100">
+
       {/* Sidebar - Left Side */}
-      <div className="w-80 bg-white flex flex-col border-r border-gray-200 sticky top-20 h-[calc(100vh-80px)] overflow-y-auto">
+      {/* CHANGED: w-full on mobile, w-80 on desktop; border-b on mobile, border-r on desktop; sticky/height only on desktop */}
+      <div className="w-full md:w-80 bg-white flex flex-col border-b md:border-b-0 md:border-r border-gray-200 md:sticky md:top-20 md:h-[calc(100vh-80px)] overflow-y-auto">
         <div className="p-8 text-center border-b border-gray-200">
           <div className="relative inline-block mb-4">
             {profileData.profilePicture ? (
@@ -281,9 +244,11 @@ export const ViewProfile: React.FC = () => {
       </div>
 
       {/* Main Content - Right Side */}
-      <div className="flex-1 p-8 overflow-y-auto">
+      {/* CHANGED: p-5 on mobile, p-8 on desktop */}
+      <div className="flex-1 p-5 md:p-8 overflow-y-auto">
         <div className="mb-8">
-          <h1 className="text-[28px] text-gray-800">Profile Dashboard</h1>
+          {/* CHANGED: text-2xl on mobile, text-[28px] on desktop */}
+          <h1 className="text-2xl md:text-[28px] text-gray-800">Profile Dashboard</h1>
         </div>
 
         {/* Account Statistics Section */}
@@ -297,8 +262,9 @@ export const ViewProfile: React.FC = () => {
             <div className="p-6">
               <div className="flex flex-col gap-3">
                 {/* Total Orders */}
-                <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-200 cursor-pointer transition-all duration-300 hover:bg-blue-50 hover:translate-x-1" onClick={() => handleStatClick('orders')}>
-                  <span className="text-3xl w-11">📦</span>
+                {/* CHANGED: icon text-2xl w-9 on mobile, text-3xl w-11 on desktop */}
+                <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-gray-50 rounded-xl border border-gray-200 cursor-pointer transition-all duration-300 hover:bg-blue-50 hover:translate-x-1" onClick={() => handleStatClick('orders')}>
+                  <span className="text-2xl md:text-3xl w-9 md:w-11">📦</span>
                   <span className="flex-1 text-sm text-gray-500 font-medium">Total Orders</span>
                   <span className="text-xl font-bold text-blue-400">{totalOrders}</span>
                   <span className="text-xs text-gray-400">{selectedStat === 'orders' ? '▲' : '▼'}</span>
@@ -317,8 +283,9 @@ export const ViewProfile: React.FC = () => {
                             </div>
                             <div className="text-xs text-gray-500 mb-2">Placed on: {new Date(order.date).toLocaleDateString()}</div>
                             {order.items.map(item => (
-                              <div key={item.id} className="flex gap-4 p-2 my-2 bg-white rounded-lg">
-                                <img src={item.image} alt={item.title} className="w-12 h-12 object-contain" />
+                              // CHANGED: flex-col text-center on mobile, flex-row on desktop (via md:)
+                              <div key={item.id} className="flex flex-col md:flex-row gap-4 p-2 my-2 bg-white rounded-lg text-center md:text-left">
+                                <img src={item.image} alt={item.title} className="w-12 h-12 object-contain mx-auto md:mx-0" />
                                 <div className="flex-1 text-xs">
                                   <div className="font-medium mb-1">{item.title.substring(0, 50)}</div>
                                   <div>Quantity: {item.quantity}</div>
@@ -343,8 +310,8 @@ export const ViewProfile: React.FC = () => {
                 )}
 
                 {/* Saved Addresses */}
-                <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-200 cursor-pointer transition-all duration-300 hover:bg-blue-50 hover:translate-x-1" onClick={() => handleStatClick('addresses')}>
-                  <span className="text-3xl w-11">📍</span>
+                <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-gray-50 rounded-xl border border-gray-200 cursor-pointer transition-all duration-300 hover:bg-blue-50 hover:translate-x-1" onClick={() => handleStatClick('addresses')}>
+                  <span className="text-2xl md:text-3xl w-9 md:w-11">📍</span>
                   <span className="flex-1 text-sm text-gray-500 font-medium">Saved Addresses</span>
                   <span className="text-xl font-bold text-blue-400">{savedAddresses}</span>
                   <span className="text-xs text-gray-400">{selectedStat === 'addresses' ? '▲' : '▼'}</span>
@@ -378,15 +345,16 @@ export const ViewProfile: React.FC = () => {
                 )}
 
                 {/* Wallet Balance */}
-                <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl border border-gray-200 cursor-pointer transition-all duration-300 hover:bg-blue-50 hover:translate-x-1" onClick={() => handleStatClick('wallet')}>
-                  <span className="text-3xl w-11">💰</span>
+                <div className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-gray-50 rounded-xl border border-gray-200 cursor-pointer transition-all duration-300 hover:bg-blue-50 hover:translate-x-1" onClick={() => handleStatClick('wallet')}>
+                  <span className="text-2xl md:text-3xl w-9 md:w-11">💰</span>
                   <span className="flex-1 text-sm text-gray-500 font-medium">Wallet Balance</span>
                   <span className="text-xl font-bold text-blue-400">${walletBalance.toFixed(2)}</span>
                   <span className="text-xs text-gray-400">{selectedStat === 'wallet' ? '▲' : '▼'}</span>
                 </div>
                 {selectedStat === 'wallet' && (
                   <div className="mt-4 p-5 bg-white rounded-xl border border-gray-200">
-                    <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-5 rounded-xl flex justify-between items-center mb-5 text-white">
+                    {/* CHANGED: flex-col gap-4 text-center on mobile, flex-row justify-between on desktop */}
+                    <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-5 rounded-xl flex flex-col md:flex-row md:justify-between items-center gap-4 md:gap-0 mb-5 text-white text-center md:text-left">
                       <div className="text-base">
                         Current Balance: <span className="text-2xl font-bold ml-2">${walletBalance.toFixed(2)}</span>
                       </div>
@@ -438,7 +406,8 @@ export const ViewProfile: React.FC = () => {
           </div>
           {isPersonalInfoOpen && (
             <div className="p-6">
-              <div className="grid grid-cols-2 gap-6">
+              {/* CHANGED: grid-cols-1 on mobile, grid-cols-2 on desktop; gap-4 mobile, gap-6 desktop */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                 <div className="flex flex-col gap-2">
                   <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Email Address</label>
                   <p className="text-base text-gray-800 py-1.5">{profileData.email}</p>
@@ -447,7 +416,8 @@ export const ViewProfile: React.FC = () => {
                   <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Date of Birth</label>
                   <p className="text-base text-gray-800 py-1.5">{profileData.dateOfBirth || 'Not provided'}</p>
                 </div>
-                <div className="flex flex-col gap-2 col-span-2">
+                {/* CHANGED: col-span-2 only on desktop */}
+                <div className="flex flex-col gap-2 md:col-span-2">
                   <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Bio</label>
                   <p className="text-base text-gray-800 py-1.5">{profileData.bio || 'No bio provided'}</p>
                 </div>
@@ -515,60 +485,6 @@ export const ViewProfile: React.FC = () => {
           </div>
         </div>
       )}
-
-      <style>{`
-        @media (max-width: 768px) {
-          .flex.min-h-\\[calc\\(100vh-80px\\)\\] {
-            flex-direction: column;
-          }
-          .w-80 {
-            width: 100%;
-            position: relative;
-            top: 0;
-            height: auto;
-            border-right: none;
-            border-bottom: 1px solid #e0e0e0;
-          }
-          .flex-1 {
-            padding: 20px;
-          }
-          .text-\\[28px\\] {
-            font-size: 24px;
-          }
-          .grid-cols-2 {
-            grid-template-columns: 1fr;
-            gap: 16px;
-          }
-          .col-span-2 {
-            grid-column: span 1;
-          }
-          .gap-4 {
-            gap: 12px;
-          }
-          .p-4 {
-            padding: 12px;
-          }
-          .text-3xl {
-            font-size: 24px;
-            width: 35px;
-          }
-          .text-xl {
-            font-size: 18px;
-          }
-          .order-item {
-            flex-direction: column;
-            text-align: center;
-          }
-          .order-item-img {
-            margin: 0 auto;
-          }
-          .bg-gradient-to-r {
-            flex-direction: column;
-            gap: 15px;
-            text-align: center;
-          }
-        }
-      `}</style>
     </div>
   );
 };

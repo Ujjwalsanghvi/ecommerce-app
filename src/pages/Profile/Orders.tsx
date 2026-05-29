@@ -1,26 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Link } from 'react-router-dom';
+import { Order } from '../../types/Order';
 
-interface Order {
-  id: string;
-  date: string;
-  total: number;
-  status: 'pending' | 'processing' | 'shipped' | 'delivered' | 'cancelled';
-  items: Array<{
-    id: number;
-    title: string;
-    price: number;
-    quantity: number;
-    image: string;
-  }>;
-  shippingAddress: {
-    street: string;
-    city: string;
-    state: string;
-    zipCode: string;
-  };
-}
 
 export const Orders: React.FC = () => {
   const { user } = useAuth();

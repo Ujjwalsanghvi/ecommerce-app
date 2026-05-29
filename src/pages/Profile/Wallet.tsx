@@ -1,14 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { Transaction } from '../../types/Transaction';
 
-interface Transaction {
-  id: string;
-  date: string;
-  type: 'credit' | 'debit';
-  amount: number;
-  description: string;
-  status: 'completed' | 'pending' | 'failed';
-}
 
 export const Wallet: React.FC = () => {
   const { user } = useAuth();
