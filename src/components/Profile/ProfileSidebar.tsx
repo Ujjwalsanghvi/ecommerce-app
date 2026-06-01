@@ -1,11 +1,8 @@
 import React, { useRef } from 'react';
 import { ProfileData } from '../../types/ProfileData';
+import { ProfileSidebarProps } from '../../types/interface ProfileSidebarProps';
 
-interface ProfileSidebarProps {
-  profileData: ProfileData;
-  onEditClick: () => void;
-  onImageUpload: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
+
 
 export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
   profileData,

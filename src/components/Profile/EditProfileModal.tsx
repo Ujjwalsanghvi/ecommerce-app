@@ -1,13 +1,8 @@
 import React from 'react';
 import { ProfileData } from '../../types/ProfileData';
+import { EditProfileModalProps } from '../../types/EditProfileModalProps';
 
-interface EditProfileModalProps {
-  isOpen: boolean;
-  editData: ProfileData;
-  onClose: () => void;
-  onSave: () => void;
-  onInputChange: (field: keyof ProfileData, value: string) => void;
-}
+
 
 export const EditProfileModal: React.FC<EditProfileModalProps> = ({
   isOpen,

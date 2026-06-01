@@ -1,11 +1,8 @@
 import React from 'react';
 import { ProfileData } from '../../types/ProfileData';
+import { PersonalInfoSectionProps } from '../../types/PersonalInfoSectionProps';
 
-interface PersonalInfoSectionProps {
-  profileData: ProfileData;
-  isOpen: boolean;
-  onToggle: () => void;
-}
+
 
 export const PersonalInfoSection: React.FC<PersonalInfoSectionProps> = ({
   profileData,

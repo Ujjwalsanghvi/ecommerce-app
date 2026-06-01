@@ -1,37 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useProfile } from '../../contexts/ProfileContext';
 import { ImpOrder } from '../../types/ImpOrder';
 import { IAddress } from '../../types/Address';
 import { Transaction } from '../../types/Transaction';
 
-interface AccountStatisticsProps {
-  orders: ImpOrder[];
-  addresses: IAddress[];
-  transactions: Transaction[];
-  walletBalance: number;
-  isStatsOpen: boolean;
-  selectedStat: string | null;
-  onToggleStats: () => void;
-  onStatClick: (statName: string) => void;
-}
+export const AccountStatistics: React.FC = () => {
+  const { orders, addresses, transactions, walletBalance } = useProfile();
+  const [isStatsOpen, setIsStatsOpen] = useState(true);
+  const [selectedStat, setSelectedStat] = useState<string | null>(null);
 
-export const AccountStatistics: React.FC<AccountStatisticsProps> = ({
-  orders,
-  addresses,
-  transactions,
-  walletBalance,
-  isStatsOpen,
-  selectedStat,
-  onToggleStats,
-  onStatClick,
-}) => {
   const totalOrders = orders.length;
   const savedAddresses = addresses.length;
   const latestOrders = orders.slice(0, 1);
   const latestAddresses = addresses.slice(0, 1);
   const latestTransactions = transactions.slice(0, 1);
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): string => {
     switch (status) {
       case 'delivered':
         return '#4caf50';
@@ -48,11 +33,15 @@ export const AccountStatistics: React.FC<AccountStatisticsProps> = ({
     }
   };
 
+  const handleStatClick = (statName: string): void => {
+    setSelectedStat(selectedStat === statName ? null : statName);
+  };
+
   return (
     <div className="bg-white rounded-xl mb-5 overflow-hidden shadow-sm">
       <div
         className="flex items-center gap-3 p-4 cursor-pointer bg-white transition-colors duration-300 border-b border-gray-200 hover:bg-gray-50"
-        onClick={onToggleStats}
+        onClick={() => setIsStatsOpen(!isStatsOpen)}
       >
         <span className="text-2xl">📊</span>
         <h2 className="flex-1 text-lg font-semibold text-gray-800 m-0">Account Statistics</h2>
@@ -67,13 +56,13 @@ export const AccountStatistics: React.FC<AccountStatisticsProps> = ({
               label="Total Orders"
               value={totalOrders}
               isOpen={selectedStat === 'orders'}
-              onToggle={() => onStatClick('orders')}
+              onToggle={() => handleStatClick('orders')}
             >
               {orders.length === 0 ? (
                 <p className="text-center text-gray-400 p-5">No orders found</p>
               ) : (
                 <>
-                  {latestOrders.map((order) => (
+                  {latestOrders.map((order: ImpOrder) => (
                     <OrderCard key={order.id} order={order} getStatusColor={getStatusColor} />
                   ))}
                   {orders.length > 1 && (
@@ -96,13 +85,13 @@ export const AccountStatistics: React.FC<AccountStatisticsProps> = ({
               label="Saved Addresses"
               value={savedAddresses}
               isOpen={selectedStat === 'addresses'}
-              onToggle={() => onStatClick('addresses')}
+              onToggle={() => handleStatClick('addresses')}
             >
               {addresses.length === 0 ? (
                 <p className="text-center text-gray-400 p-5">No addresses saved</p>
               ) : (
                 <>
-                  {latestAddresses.map((address) => (
+                  {latestAddresses.map((address: IAddress) => (
                     <AddressCard key={address.id} address={address} />
                   ))}
                   {addresses.length > 1 && (
@@ -125,7 +114,7 @@ export const AccountStatistics: React.FC<AccountStatisticsProps> = ({
               label="Wallet Balance"
               value={`$${walletBalance.toFixed(2)}`}
               isOpen={selectedStat === 'wallet'}
-              onToggle={() => onStatClick('wallet')}
+              onToggle={() => handleStatClick('wallet')}
             >
               <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-5 rounded-xl flex flex-col md:flex-row md:justify-between items-center gap-4 md:gap-0 mb-5 text-white text-center md:text-left">
                 <div className="text-base">
@@ -143,7 +132,7 @@ export const AccountStatistics: React.FC<AccountStatisticsProps> = ({
                 <p className="text-center text-gray-400 p-5">No transactions yet</p>
               ) : (
                 <>
-                  {latestTransactions.map((transaction) => (
+                  {latestTransactions.map((transaction: Transaction) => (
                     <TransactionCard key={transaction.id} transaction={transaction} />
                   ))}
                   {transactions.length > 1 && (
@@ -166,15 +155,17 @@ export const AccountStatistics: React.FC<AccountStatisticsProps> = ({
   );
 };
 
-// Helper Components
-const StatCard: React.FC<{
+// Helper Components with proper types
+interface StatCardProps {
   icon: string;
   label: string;
   value: string | number;
   isOpen: boolean;
   onToggle: () => void;
   children: React.ReactNode;
-}> = ({ icon, label, value, isOpen, onToggle, children }) => (
+}
+
+const StatCard: React.FC<StatCardProps> = ({ icon, label, value, isOpen, onToggle, children }) => (
   <>
     <div
       className="flex items-center gap-3 md:gap-4 p-3 md:p-4 bg-gray-50 rounded-xl border border-gray-200 cursor-pointer transition-all duration-300 hover:bg-blue-50 hover:translate-x-1"
@@ -189,10 +180,12 @@ const StatCard: React.FC<{
   </>
 );
 
-const OrderCard: React.FC<{ order: ImpOrder; getStatusColor: (status: string) => string }> = ({
-  order,
-  getStatusColor,
-}) => (
+interface OrderCardProps {
+  order: ImpOrder;
+  getStatusColor: (status: string) => string;
+}
+
+const OrderCard: React.FC<OrderCardProps> = ({ order, getStatusColor }) => (
   <div className="p-4 mb-4 border border-gray-200 rounded-lg bg-gray-50">
     <div className="flex justify-between mb-2">
       <span className="font-bold text-sm">Order #{order.id}</span>
@@ -222,7 +215,11 @@ const OrderCard: React.FC<{ order: ImpOrder; getStatusColor: (status: string) =>
   </div>
 );
 
-const AddressCard: React.FC<{ address: IAddress }> = ({ address }) => (
+interface AddressCardProps {
+  address: IAddress;
+}
+
+const AddressCard: React.FC<AddressCardProps> = ({ address }) => (
   <div className="p-4 mb-4 border border-gray-200 rounded-lg bg-gray-50 relative">
     {address.isDefault && (
       <span className="absolute top-2 right-2 bg-green-500 text-white px-2 py-0.5 rounded text-[10px]">Default</span>
@@ -239,7 +236,11 @@ const AddressCard: React.FC<{ address: IAddress }> = ({ address }) => (
   </div>
 );
 
-const TransactionCard: React.FC<{ transaction: Transaction }> = ({ transaction }) => (
+interface TransactionCardProps {
+  transaction: Transaction;
+}
+
+const TransactionCard: React.FC<TransactionCardProps> = ({ transaction }) => (
   <div className="p-3 mb-2 border border-gray-200 rounded-lg bg-gray-50">
     <div className="flex justify-between mb-2">
       <div>
