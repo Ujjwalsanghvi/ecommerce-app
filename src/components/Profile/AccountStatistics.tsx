@@ -4,6 +4,10 @@ import { useProfile } from '../../contexts/ProfileContext';
 import { ImpOrder } from '../../types/ImpOrder';
 import { IAddress } from '../../types/Address';
 import { Transaction } from '../../types/Transaction';
+import { StatCardProps } from '../../types/StatCardProps';
+import { OrderCardProps } from '../../types/OrderCardProps';
+import { TransactionCardProps } from '../../types/TransactionCardProps';
+import { AddressCardProps } from '../../types/AddressCardProps';
 
 export const AccountStatistics: React.FC = () => {
   const { orders, addresses, transactions, walletBalance } = useProfile();
@@ -155,15 +159,7 @@ export const AccountStatistics: React.FC = () => {
   );
 };
 
-// Helper Components with proper types
-interface StatCardProps {
-  icon: string;
-  label: string;
-  value: string | number;
-  isOpen: boolean;
-  onToggle: () => void;
-  children: React.ReactNode;
-}
+
 
 const StatCard: React.FC<StatCardProps> = ({ icon, label, value, isOpen, onToggle, children }) => (
   <>
@@ -180,10 +176,6 @@ const StatCard: React.FC<StatCardProps> = ({ icon, label, value, isOpen, onToggl
   </>
 );
 
-interface OrderCardProps {
-  order: ImpOrder;
-  getStatusColor: (status: string) => string;
-}
 
 const OrderCard: React.FC<OrderCardProps> = ({ order, getStatusColor }) => (
   <div className="p-4 mb-4 border border-gray-200 rounded-lg bg-gray-50">
@@ -215,9 +207,6 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, getStatusColor }) => (
   </div>
 );
 
-interface AddressCardProps {
-  address: IAddress;
-}
 
 const AddressCard: React.FC<AddressCardProps> = ({ address }) => (
   <div className="p-4 mb-4 border border-gray-200 rounded-lg bg-gray-50 relative">
@@ -236,9 +225,6 @@ const AddressCard: React.FC<AddressCardProps> = ({ address }) => (
   </div>
 );
 
-interface TransactionCardProps {
-  transaction: Transaction;
-}
 
 const TransactionCard: React.FC<TransactionCardProps> = ({ transaction }) => (
   <div className="p-3 mb-2 border border-gray-200 rounded-lg bg-gray-50">

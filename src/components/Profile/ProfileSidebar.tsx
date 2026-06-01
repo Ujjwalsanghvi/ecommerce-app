@@ -1,15 +1,21 @@
 import React, { useRef } from 'react';
-import { ProfileData } from '../../types/ProfileData';
-import { ProfileSidebarProps } from '../../types/interface ProfileSidebarProps';
+import { useProfile } from '../../contexts/ProfileContext';
 
-
-
-export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
-  profileData,
-  onEditClick,
-  onImageUpload,
-}) => {
+export const ProfileSidebar: React.FC = () => {
+  const { profileData, updateProfilePicture, handleEditClick } = useProfile();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const imageUrl = reader.result as string;
+        updateProfilePicture(imageUrl);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <div className="w-full md:w-80 bg-white flex flex-col border-b md:border-b-0 md:border-r border-gray-200 md:sticky md:top-20 md:h-[calc(100vh-80px)] overflow-y-auto">
@@ -37,7 +43,7 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
           <input
             type="file"
             ref={fileInputRef}
-            onChange={onImageUpload}
+            onChange={handleImageUpload}
             accept="image/*"
             style={{ display: 'none' }}
           />
@@ -45,7 +51,7 @@ export const ProfileSidebar: React.FC<ProfileSidebarProps> = ({
         <h3 className="text-base font-bold mb-1 text-gray-800">{profileData.fullName}</h3>
         <p className="text-xs text-gray-500 mb-4">{profileData.email}</p>
         <button
-          onClick={onEditClick}
+          onClick={handleEditClick}
           className="bg-blue-400 text-white border-none py-2 px-4 cursor-pointer text-xs w-full transition-all duration-300 rounded-full hover:bg-blue-500 hover:-translate-y-0.5"
         >
           ✏️ Edit Personal Information

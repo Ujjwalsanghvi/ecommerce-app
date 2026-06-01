@@ -4,18 +4,8 @@ import { ProfileData } from '../types/ProfileData';
 import { IAddress } from '../types/Address';
 import { Transaction } from '../types/Transaction';
 import { ImpOrder } from '../types/ImpOrder';
+import { ProfileContextType } from '../types/ProfileContextType';
 
-interface ProfileContextType {
-  profileData: ProfileData;
-  updateProfilePicture: (imageUrl: string) => void;
-  updateProfileData: (data: Partial<ProfileData>) => void;
-  // Statistics data
-  orders: ImpOrder[];
-  addresses: IAddress[];
-  transactions: Transaction[];
-  walletBalance: number;
-  loadStatistics: () => void;
-}
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
@@ -29,6 +19,7 @@ export const useProfile = (): ProfileContextType => {
 
 export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [profileData, setProfileData] = useState<ProfileData>({
     fullName: user?.name || '',
     email: user?.email || '',
@@ -39,6 +30,7 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
     profilePicture: '',
     joinDate: new Date().toISOString().split('T')[0]
   });
+  const [editData, setEditData] = useState<ProfileData>(profileData);
 
   // Statistics state
   const [orders, setOrders] = useState<ImpOrder[]>([]);
@@ -50,6 +42,10 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
     loadProfileData();
     loadStatistics();
   }, [user?.id]);
+
+  useEffect(() => {
+    setEditData(profileData);
+  }, [profileData]);
 
   const loadProfileData = () => {
     const savedProfile = localStorage.getItem(`profile_${user?.id}`);
@@ -179,11 +175,41 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
     localStorage.setItem(`profile_${user?.id}`, JSON.stringify(updatedData));
   };
 
+  const handleEditClick = () => {
+    setEditData(profileData);
+    setIsModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const openEditModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleSaveChanges = () => {
+    updateProfileData(editData);
+    setIsModalOpen(false);
+  };
+
+  const handleInputChange = (field: keyof ProfileData, value: string) => {
+    setEditData({ ...editData, [field]: value });
+  };
+
   return (
     <ProfileContext.Provider value={{ 
       profileData, 
       updateProfilePicture, 
       updateProfileData,
+      openEditModal,
+      closeEditModal,
+      isEditModalOpen: isModalOpen,
+      editData,
+      setEditData,
+      handleInputChange,
+      handleSaveChanges,
+      handleEditClick,
       orders,
       addresses,
       transactions,
