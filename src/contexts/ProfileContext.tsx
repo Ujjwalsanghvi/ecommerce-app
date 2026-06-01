@@ -1,16 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
+import { ProfileData } from '../types/ProfileData';
 
-interface ProfileData {
-  fullName: string;
-  email: string;
-  phone: string;
-  dateOfBirth: string;
-  gender: string;
-  bio: string;
-  profilePicture: string;
-  joinDate: string;
-}
 
 interface ProfileContextType {
   profileData: ProfileData;
