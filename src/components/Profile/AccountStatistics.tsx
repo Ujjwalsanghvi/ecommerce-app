@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useProfile } from '../../contexts/ProfileContext';
-import { ImpOrder } from '../../types/ImpOrder';
+import { Order, OrderCardProps } from '../../types/Order';  // Changed: use Order instead of ImpOrder
 import { IAddress } from '../../types/Address';
 import { Transaction } from '../../types/Transaction';
 import { StatCardProps } from '../../types/StatCardProps';
-import { OrderCardProps } from '../../types/OrderCardProps';
-import { TransactionCardProps } from '../../types/TransactionCardProps';
 import { AddressCardProps } from '../../types/AddressCardProps';
+import { TransactionCardProps } from '../../types/TransactionCardProps';
 
 export const AccountStatistics: React.FC = () => {
   const { orders, addresses, transactions, walletBalance } = useProfile();
@@ -66,7 +65,7 @@ export const AccountStatistics: React.FC = () => {
                 <p className="text-center text-gray-400 p-5">No orders found</p>
               ) : (
                 <>
-                  {latestOrders.map((order: ImpOrder) => (
+                  {latestOrders.map((order: Order) => (  // Changed: ImpOrder → Order
                     <OrderCard key={order.id} order={order} getStatusColor={getStatusColor} />
                   ))}
                   {orders.length > 1 && (
@@ -159,8 +158,7 @@ export const AccountStatistics: React.FC = () => {
   );
 };
 
-
-
+// Helper Components - moved inside the same file
 const StatCard: React.FC<StatCardProps> = ({ icon, label, value, isOpen, onToggle, children }) => (
   <>
     <div
@@ -175,7 +173,6 @@ const StatCard: React.FC<StatCardProps> = ({ icon, label, value, isOpen, onToggl
     {isOpen && <div className="mt-4 p-5 bg-white rounded-xl border border-gray-200">{children}</div>}
   </>
 );
-
 
 const OrderCard: React.FC<OrderCardProps> = ({ order, getStatusColor }) => (
   <div className="p-4 mb-4 border border-gray-200 rounded-lg bg-gray-50">
@@ -207,7 +204,6 @@ const OrderCard: React.FC<OrderCardProps> = ({ order, getStatusColor }) => (
   </div>
 );
 
-
 const AddressCard: React.FC<AddressCardProps> = ({ address }) => (
   <div className="p-4 mb-4 border border-gray-200 rounded-lg bg-gray-50 relative">
     {address.isDefault && (
@@ -224,7 +220,6 @@ const AddressCard: React.FC<AddressCardProps> = ({ address }) => (
     <p>📞 {address.phone}</p>
   </div>
 );
-
 
 const TransactionCard: React.FC<TransactionCardProps> = ({ transaction }) => (
   <div className="p-3 mb-2 border border-gray-200 rounded-lg bg-gray-50">

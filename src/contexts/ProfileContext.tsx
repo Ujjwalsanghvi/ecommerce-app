@@ -3,9 +3,8 @@ import { useAuth } from './AuthContext';
 import { ProfileData } from '../types/ProfileData';
 import { IAddress } from '../types/Address';
 import { Transaction } from '../types/Transaction';
-import { ImpOrder } from '../types/ImpOrder';
+import { Order } from '../types/Order'; // Add this import - use Order instead of ImpOrder
 import { ProfileContextType } from '../types/ProfileContextType';
-
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
@@ -32,8 +31,8 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
   });
   const [editData, setEditData] = useState<ProfileData>(profileData);
 
-  // Statistics state
-  const [orders, setOrders] = useState<ImpOrder[]>([]);
+  // Statistics state - changed ImpOrder[] to Order[]
+  const [orders, setOrders] = useState<Order[]>([]);
   const [addresses, setAddresses] = useState<IAddress[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [walletBalance, setWalletBalance] = useState(0);
@@ -66,7 +65,7 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (savedOrders) {
       setOrders(JSON.parse(savedOrders));
     } else {
-      const demoOrders: ImpOrder[] = [
+      const demoOrders: Order[] = [ // Changed ImpOrder[] to Order[]
         {
           id: 'ORD-001',
           date: '2024-05-10',
@@ -81,6 +80,12 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
               image: 'https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg',
             },
           ],
+          shippingAddress: { // Add shippingAddress property to match Order interface
+            street: '123 Main Street',
+            city: 'New York',
+            state: 'NY',
+            zipCode: '10001'
+          }
         },
         {
           id: 'ORD-002',
@@ -96,6 +101,12 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
               image: 'https://fakestoreapi.com/img/71-3HjGNDUL._AC_SY879._SX._UX._SY._UY_.jpg',
             },
           ],
+          shippingAddress: { // Add shippingAddress property to match Order interface
+            street: '123 Main Street',
+            city: 'New York',
+            state: 'NY',
+            zipCode: '10001'
+          }
         },
       ];
       setOrders(demoOrders);

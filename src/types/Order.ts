@@ -17,3 +17,10 @@ export interface Order {
     zipCode: string;
   };
 }
+
+export interface OrderCardProps {
+  order: Order;
+  getStatusColor: (status: string) => string;
+}
+
+export type ImpOrder = Order;
