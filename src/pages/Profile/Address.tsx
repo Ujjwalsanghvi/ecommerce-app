@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { IAddress } from '../../types/Address';
+import { getDemoAddresses } from '../../data/demoAddresses';
 
 
 
@@ -28,19 +29,9 @@ export const Address: React.FC = () => {
     if (savedAddresses) {
       setAddresses(JSON.parse(savedAddresses));
     } else {
-      const demoAddresses = [
-        {
-          id: 1,
-          fullName: user?.name || 'John Doe',
-          street: '123 Main Street',
-          city: 'New York',
-          state: 'NY',
-          zipCode: '10001',
-          country: 'USA',
-          phone: '+1 234 567 8900',
-          isDefault: true
-        }
-      ];
+      
+        const demoAddresses = getDemoAddresses(user);
+
       setAddresses(demoAddresses);
       localStorage.setItem(`addresses_${user?.id}`, JSON.stringify(demoAddresses));
     }

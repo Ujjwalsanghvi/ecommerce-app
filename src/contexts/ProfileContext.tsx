@@ -5,6 +5,9 @@ import { IAddress } from '../types/Address';
 import { Transaction } from '../types/Transaction';
 import { Order } from '../types/Order'; // Add this import - use Order instead of ImpOrder
 import { ProfileContextType } from '../types/ProfileContextType';
+import { demoOrders } from '../data/demoOrders';
+import { demoTransactions } from '../data/demoTransactions';
+import { getDemoAddresses } from '../data/demoAddresses';
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
@@ -65,50 +68,7 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (savedOrders) {
       setOrders(JSON.parse(savedOrders));
     } else {
-      const demoOrders: Order[] = [ // Changed ImpOrder[] to Order[]
-        {
-          id: 'ORD-001',
-          date: '2024-05-10',
-          total: 299.97,
-          status: 'delivered',
-          items: [
-            {
-              id: 1,
-              title: 'Fjallraven - Foldsack No. 1 Backpack',
-              price: 109.95,
-              quantity: 1,
-              image: 'https://fakestoreapi.com/img/81fPKd-2AYL._AC_SL1500_.jpg',
-            },
-          ],
-          shippingAddress: { // Add shippingAddress property to match Order interface
-            street: '123 Main Street',
-            city: 'New York',
-            state: 'NY',
-            zipCode: '10001'
-          }
-        },
-        {
-          id: 'ORD-002',
-          date: '2024-05-05',
-          total: 89.99,
-          status: 'shipped',
-          items: [
-            {
-              id: 2,
-              title: 'Mens Casual Premium Slim Fit T-Shirts',
-              price: 22.3,
-              quantity: 2,
-              image: 'https://fakestoreapi.com/img/71-3HjGNDUL._AC_SY879._SX._UX._SY._UY_.jpg',
-            },
-          ],
-          shippingAddress: { // Add shippingAddress property to match Order interface
-            street: '123 Main Street',
-            city: 'New York',
-            state: 'NY',
-            zipCode: '10001'
-          }
-        },
-      ];
+    
       setOrders(demoOrders);
       localStorage.setItem(`orders_${user?.id}`, JSON.stringify(demoOrders));
     }
@@ -119,19 +79,7 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (savedAddresses) {
       setAddresses(JSON.parse(savedAddresses));
     } else {
-      const demoAddresses: IAddress[] = [
-        {
-          id: 1,
-          fullName: user?.name || 'John Doe',
-          street: '123 Main Street',
-          city: 'New York',
-          state: 'NY',
-          zipCode: '10001',
-          country: 'USA',
-          phone: '+1 234 567 8900',
-          isDefault: true,
-        },
-      ];
+    const demoAddresses=getDemoAddresses(user)
       setAddresses(demoAddresses);
       localStorage.setItem(`addresses_${user?.id}`, JSON.stringify(demoAddresses));
     }
@@ -151,24 +99,7 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (savedTransactions) {
       setTransactions(JSON.parse(savedTransactions));
     } else {
-      const demoTransactions: Transaction[] = [
-        {
-          id: 'TXN-001',
-          date: '2024-05-10',
-          type: 'credit',
-          amount: 500.0,
-          description: 'Added money to wallet',
-          status: 'completed',
-        },
-        {
-          id: 'TXN-002',
-          date: '2024-05-05',
-          type: 'debit',
-          amount: 89.99,
-          description: 'Payment for Order #ORD-002',
-          status: 'completed',
-        },
-      ];
+    
       setTransactions(demoTransactions);
       localStorage.setItem(`wallet_transactions_${user?.id}`, JSON.stringify(demoTransactions));
     }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Transaction } from '../../types/Transaction';
+import { demoTransactions } from '../../data/demoTransactions';
 
 
 export const Wallet: React.FC = () => {
@@ -28,24 +29,7 @@ export const Wallet: React.FC = () => {
     if (savedTransactions) {
       setTransactions(JSON.parse(savedTransactions));
     } else {
-      const demoTransactions: Transaction[] = [
-        {
-          id: 'TXN-001',
-          date: '2024-05-10',
-          type: 'credit',
-          amount: 500.00,
-          description: 'Added money to wallet',
-          status: 'completed'
-        },
-        {
-          id: 'TXN-002',
-          date: '2024-05-05',
-          type: 'debit',
-          amount: 89.99,
-          description: 'Payment for Order #ORD-002',
-          status: 'completed'
-        }
-      ];
+
       setTransactions(demoTransactions);
       localStorage.setItem(`wallet_transactions_${user?.id}`, JSON.stringify(demoTransactions));
     }
