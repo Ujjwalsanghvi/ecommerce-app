@@ -152,7 +152,7 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
       handleInputChange,
       handleSaveChanges,
       handleEditClick,
-      orders,
+      // orders intentionally not exposed in context to match ProfileContextType
       addresses,
       transactions,
       walletBalance,

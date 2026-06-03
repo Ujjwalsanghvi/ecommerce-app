@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { IAddress } from '../../types/Address';
-import { getDemoAddresses } from '../../data/demoAddresses';
-
-
+import React from 'react';
+import { useAddress } from '../../hooks/useAddress';
+import { AddressHeader } from '../../components/Address/AddressHeader';
+import { AddressCard } from '../../components/Address/AddressCard';
+import { AddressForm } from '../../components/Address/AddressForm';
+import { EmptyAddressState } from '../../components/Address/EmptyAddressState';
 
 export const Address: React.FC = () => {
   const { user } = useAuth();

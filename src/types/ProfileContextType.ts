@@ -1,5 +1,4 @@
 import { IAddress } from "./Address";
-import { ImpOrder } from "./ImpOrder";
 import { ProfileData } from "./ProfileData";
 import { Transaction } from "./Transaction";
 
@@ -16,7 +15,7 @@ export interface ProfileContextType {
   handleSaveChanges: () => void;
   handleEditClick: () => void;
   // Statistics data
-  orders: ImpOrder[];
+
   addresses: IAddress[];
   transactions: Transaction[];
   walletBalance: number;
