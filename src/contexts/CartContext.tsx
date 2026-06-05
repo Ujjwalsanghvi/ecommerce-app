@@ -1,15 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { CartItem, Product } from '../types/Mainview';
+import { CartContextType } from '../types/CartContextType';
 
-interface CartContextType {
-  cart: CartItem[];
-  addToCart: (product: Product, quantity?: number) => void;
-  removeFromCart: (productId: number) => void;
-  updateQuantity: (productId: number, quantity: number) => void;
-  clearCart: () => void;
-  getCartTotal: () => number;
-  getCartCount: () => number;
-}
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
 
@@ -87,3 +79,4 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     </CartContext.Provider>
   );
 };
+

@@ -1,15 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Product } from '../types/Mainview';
 import { useAuth } from './AuthContext';
+import { WishlistContextType } from '../types/WishlistContextType';
 
-interface WishlistContextType {
-  wishlist: Product[];
-  addToWishlist: (product: Product) => void;
-  removeFromWishlist: (productId: number) => void;
-  isInWishlist: (productId: number) => boolean;
-  getWishlistCount: () => number;
-  clearWishlist: () => void;
-}
 
 const WishlistContext = createContext<WishlistContextType | undefined>(undefined);
 
