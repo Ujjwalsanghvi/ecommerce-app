@@ -2,21 +2,14 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { IAddress } from '../types/Address';
 import { getDemoAddresses } from '../data/demoAddresses';
+import { getInitialAddressForm } from '../data/addressFormData';
 
 export const useAddress = () => {
   const { user } = useAuth();
   const [addresses, setAddresses] = useState<IAddress[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingAddress, setEditingAddress] = useState<IAddress | null>(null);
-  const [formData, setFormData] = useState({
-    fullName: '',
-    street: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    country: '',
-    phone: ''
-  });
+  const [formData, setFormData] = useState(getInitialAddressForm());
 
   useEffect(() => {
     loadAddresses();
@@ -36,6 +29,10 @@ export const useAddress = () => {
   const saveAddresses = (newAddresses: IAddress[]) => {
     setAddresses(newAddresses);
     localStorage.setItem(`addresses_${user?.id}`, JSON.stringify(newAddresses));
+  };
+
+  const resetForm = () => {
+    setFormData(getInitialAddressForm());
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -60,29 +57,9 @@ export const useAddress = () => {
     resetForm();
   };
 
-  const resetForm = () => {
-    setFormData({
-      fullName: '',
-      street: '',
-      city: '',
-      state: '',
-      zipCode: '',
-      country: '',
-      phone: ''
-    });
-  };
-
   const handleEdit = (address: IAddress) => {
     setEditingAddress(address);
-    setFormData({
-      fullName: address.fullName,
-      street: address.street,
-      city: address.city,
-      state: address.state,
-      zipCode: address.zipCode,
-      country: address.country,
-      phone: address.phone
-    });
+    setFormData(getInitialAddressForm(address));
     setShowForm(true);
   };
 
@@ -103,15 +80,7 @@ export const useAddress = () => {
 
   const openAddForm = () => {
     setEditingAddress(null);
-    setFormData({
-      fullName: user?.name || '',
-      street: '',
-      city: '',
-      state: '',
-      zipCode: '',
-      country: '',
-      phone: ''
-    });
+    setFormData(getInitialAddressForm());
     setShowForm(true);
   };
 

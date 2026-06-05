@@ -18,9 +18,11 @@ export interface Order {
   };
 }
 
+// OrderCardProps interface
 export interface OrderCardProps {
   order: Order;
   getStatusColor: (status: string) => string;
 }
 
+// For backward compatibility
 export type ImpOrder = Order;

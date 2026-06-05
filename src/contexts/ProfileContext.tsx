@@ -68,7 +68,6 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (savedOrders) {
       setOrders(JSON.parse(savedOrders));
     } else {
-    
       setOrders(demoOrders);
       localStorage.setItem(`orders_${user?.id}`, JSON.stringify(demoOrders));
     }
@@ -79,7 +78,7 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (savedAddresses) {
       setAddresses(JSON.parse(savedAddresses));
     } else {
-    const demoAddresses=getDemoAddresses(user)
+      const demoAddresses=getDemoAddresses(user)
       setAddresses(demoAddresses);
       localStorage.setItem(`addresses_${user?.id}`, JSON.stringify(demoAddresses));
     }
@@ -99,7 +98,6 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (savedTransactions) {
       setTransactions(JSON.parse(savedTransactions));
     } else {
-    
       setTransactions(demoTransactions);
       localStorage.setItem(`wallet_transactions_${user?.id}`, JSON.stringify(demoTransactions));
     }
@@ -152,7 +150,7 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
       handleInputChange,
       handleSaveChanges,
       handleEditClick,
-      // orders intentionally not exposed in context to match ProfileContextType
+      orders,
       addresses,
       transactions,
       walletBalance,

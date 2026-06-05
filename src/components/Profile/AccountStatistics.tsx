@@ -5,8 +5,9 @@ import { Order, OrderCardProps } from '../../types/Order';  // Changed: use Orde
 import { IAddress } from '../../types/Address';
 import { Transaction } from '../../types/Transaction';
 import { StatCardProps } from '../../types/StatCardProps';
-import { AddressCardProps } from '../../types/AddressCardProps';
 import { TransactionCardProps } from '../../types/TransactionCardProps';
+import { AddressCardProps } from '../../types/AddressCardProps';
+
 
 export const AccountStatistics: React.FC = () => {
   const { orders, addresses, transactions, walletBalance } = useProfile();

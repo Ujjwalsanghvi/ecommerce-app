@@ -1,4 +1,5 @@
 import { IAddress } from "./Address";
+import { Order } from "./Order";
 import { ProfileData } from "./ProfileData";
 import { Transaction } from "./Transaction";
 
@@ -14,6 +15,7 @@ export interface ProfileContextType {
   handleInputChange: (field: keyof ProfileData, value: string) => void;
   handleSaveChanges: () => void;
   handleEditClick: () => void;
+  orders: Order[];
   // Statistics data
 
   addresses: IAddress[];
