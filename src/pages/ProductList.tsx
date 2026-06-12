@@ -3,9 +3,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { Product } from '../types/Mainview';
-import { useCart } from '../contexts/CartContext';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { addToCart } from '../store/slices/cartSlice';
 
 export const ProductList: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const cartItems = useAppSelector((state) => state.cart.items);
+  
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -16,9 +20,7 @@ export const ProductList: React.FC = () => {
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const { addToCart } = useCart();
-  const { addToWishlist, removeFromWishlist, isInWishlist } =
-    useWishlist();
+  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
 
   useEffect(() => {
     fetchProducts();
@@ -89,6 +91,10 @@ export const ProductList: React.FC = () => {
     }
 
     setFilteredProducts(filtered);
+  };
+
+  const handleAddToCart = (product: Product) => {
+    dispatch(addToCart({ product, quantity: 1 }));
   };
 
   const handleFavoriteToggle = (
@@ -456,9 +462,9 @@ export const ProductList: React.FC = () => {
               </div>
             </Link>
 
-            {/* Add To Cart */}
+            {/* Add To Cart - Now using Redux dispatch */}
             <button
-              onClick={() => addToCart(product)}
+              onClick={() => handleAddToCart(product)}
               className="
                 m-[0_16px_16px_16px]
                 bg-[#4fc3f7]
@@ -508,3 +514,5 @@ export const ProductList: React.FC = () => {
     </div>
   );
 };
+
+export default ProductList;

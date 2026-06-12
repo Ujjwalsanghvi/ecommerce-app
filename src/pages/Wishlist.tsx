@@ -1,14 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useWishlist } from '../contexts/WishlistContext';
-import { useCart } from '../contexts/CartContext';
+import { useAppDispatch } from '../store/hooks';
+import { addToCart } from '../store/slices/cartSlice';
 
 export const Wishlist: React.FC = () => {
+  const dispatch = useAppDispatch();
   const { wishlist, removeFromWishlist, clearWishlist } = useWishlist();
-  const { addToCart } = useCart();
 
   const handleMoveToCart = (product: any) => {
-    addToCart(product, 1);
+    dispatch(addToCart({ product, quantity: 1 }));
     removeFromWishlist(product.id);
   };
 

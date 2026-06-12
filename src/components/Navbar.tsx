@@ -2,16 +2,16 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { logout } from '../store/slices/authSlice';
+import { selectCartCount } from '../store/slices/cartSlice';
 import { useProfile } from '../contexts/ProfileContext';
-import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 
 export const Navbar: React.FC = () => {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
+  const cartCount = useAppSelector(selectCartCount);
   const { profileData } = useProfile();
-  const { getCartCount } = useCart();
   const { getWishlistCount } = useWishlist();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -78,7 +78,7 @@ export const Navbar: React.FC = () => {
           {isAuthenticated ? (
             <>
               <Link to="/cart" className="text-white no-underline px-3 py-2 rounded-md transition-colors duration-300 text-sm font-medium hover:bg-white/10">
-                Cart ({getCartCount()})
+                Cart ({cartCount})
               </Link>
               
               <Link to="/profile/view" className="text-[#4fc3f7] no-underline px-4 py-2 rounded-md transition-all duration-300 text-sm font-medium bg-blue-400/10 border border-blue-400/30 hover:bg-blue-400/20 hover:-translate-y-0.5">
@@ -163,7 +163,7 @@ export const Navbar: React.FC = () => {
             {isAuthenticated ? (
               <>
                 <Link to="/cart" className="text-white no-underline py-2.5 text-base text-center bg-white/10 rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>
-                  Cart ({getCartCount()})
+                  Cart ({cartCount})
                 </Link>
                 <Link to="/profile/address" className="text-white no-underline py-2.5 text-base text-center bg-white/10 rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>
                   My Address

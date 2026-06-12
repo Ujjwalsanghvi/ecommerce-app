@@ -1,9 +1,32 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useCart } from '../contexts/CartContext';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { 
+  removeFromCart, 
+  updateQuantity, 
+  clearCart,
+  selectCartItems,
+  selectCartTotal,
+  selectCartCount
+} from '../store/slices/cartSlice';
 
 export const Cart: React.FC = () => {
-  const { cart, updateQuantity, removeFromCart, getCartTotal, clearCart } = useCart();
+  const dispatch = useAppDispatch();
+  const cart = useAppSelector(selectCartItems);
+  const total = useAppSelector(selectCartTotal);
+  const count = useAppSelector(selectCartCount);
+
+  const handleUpdateQuantity = (productId: number, quantity: number) => {
+    dispatch(updateQuantity({ productId, quantity }));
+  };
+
+  const handleRemoveFromCart = (productId: number) => {
+    dispatch(removeFromCart(productId));
+  };
+
+  const handleClearCart = () => {
+    dispatch(clearCart());
+  };
 
   if (cart.length === 0) {
     return (
@@ -97,7 +120,7 @@ export const Cart: React.FC = () => {
                   <div className="flex items-center gap-3 max-md:justify-center">
                     <button
                       onClick={() =>
-                        updateQuantity(item.product.id, item.quantity - 1)
+                        handleUpdateQuantity(item.product.id, item.quantity - 1)
                       }
                       className="
                         w-8
@@ -131,7 +154,7 @@ export const Cart: React.FC = () => {
 
                     <button
                       onClick={() =>
-                        updateQuantity(item.product.id, item.quantity + 1)
+                        handleUpdateQuantity(item.product.id, item.quantity + 1)
                       }
                       className="
                         w-8
@@ -165,7 +188,7 @@ export const Cart: React.FC = () => {
                   </div>
 
                   <button
-                    onClick={() => removeFromCart(item.product.id)}
+                    onClick={() => handleRemoveFromCart(item.product.id)}
                     className="
                       px-4
                       py-2
@@ -228,7 +251,7 @@ export const Cart: React.FC = () => {
 
               <div className="flex justify-between mb-[15px] text-[15px] text-[#666] max-md:text-[14px]">
                 <span>Subtotal:</span>
-                <span>${getCartTotal().toFixed(2)}</span>
+                <span>${total.toFixed(2)}</span>
               </div>
 
               <div className="flex justify-between mb-[15px] text-[15px] text-[#666] max-md:text-[14px]">
@@ -240,12 +263,12 @@ export const Cart: React.FC = () => {
                 <span>Total:</span>
 
                 <span className="text-[#4fc3f7] text-[20px] max-md:text-[18px]">
-                  ${getCartTotal().toFixed(2)}
+                  ${total.toFixed(2)}
                 </span>
               </div>
 
               <button
-                onClick={clearCart}
+                onClick={handleClearCart}
                 className="
                   w-full
                   py-3
@@ -300,3 +323,5 @@ export const Cart: React.FC = () => {
     </div>
   );
 };
+
+export default Cart;

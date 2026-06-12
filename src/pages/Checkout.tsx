@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useCart } from '../contexts/CartContext';
-import { useAppSelector } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { 
+  selectCartItems, 
+  selectCartTotal, 
+  clearCart 
+} from '../store/slices/cartSlice';
 
 export const Checkout: React.FC = () => {
-  const { cart, getCartTotal, clearCart } = useCart();
+  const dispatch = useAppDispatch();
+  const cart = useAppSelector(selectCartItems);
+  const total = useAppSelector(selectCartTotal);
   const { user } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -48,7 +54,7 @@ export const Checkout: React.FC = () => {
     const newOrder = {
       id: `ORD-${Date.now()}`,
       date: new Date().toISOString().split('T')[0],
-      total: getCartTotal(),
+      total: total,
       status: 'pending',
       items: cart.map(item => ({
         id: item.product.id,
@@ -73,7 +79,7 @@ export const Checkout: React.FC = () => {
     
     // Update wallet balance (deduct amount)
     const currentBalance = parseFloat(localStorage.getItem(`wallet_balance_${user?.id}`) || '0');
-    const newBalance = currentBalance - getCartTotal();
+    const newBalance = currentBalance - total;
     localStorage.setItem(`wallet_balance_${user?.id}`, newBalance.toString());
     
     // Add transaction record
@@ -83,14 +89,14 @@ export const Checkout: React.FC = () => {
       id: `TXN-${Date.now()}`,
       date: new Date().toISOString().split('T')[0],
       type: 'debit',
-      amount: getCartTotal(),
+      amount: total,
       description: `Payment for Order #${newOrder.id}`,
       status: 'completed'
     });
     localStorage.setItem(`wallet_transactions_${user?.id}`, JSON.stringify(transactions));
     
     alert('Order placed successfully!');
-    clearCart();
+    dispatch(clearCart());
     navigate('/products');
   };
 
@@ -236,11 +242,11 @@ export const Checkout: React.FC = () => {
             
             <div className="flex justify-between items-center mb-5 pt-2">
               <span className="text-lg font-semibold text-gray-800">Total:</span>
-              <span className="text-2xl font-bold text-blue-400">${getCartTotal().toFixed(2)}</span>
+              <span className="text-2xl font-bold text-blue-400">${total.toFixed(2)}</span>
             </div>
             
             <button type="submit" className="w-full bg-green-500 text-white border-none py-3.5 rounded-lg text-base font-semibold cursor-pointer transition-all duration-300 hover:bg-green-600 hover:-translate-y-0.5 hover:shadow-[0_4px_12px_rgba(76,175,80,0.3)] md:py-3 md:text-sm">
-              Place Order (${getCartTotal().toFixed(2)})
+              Place Order (${total.toFixed(2)})
             </button>
           </div>
         </div>
