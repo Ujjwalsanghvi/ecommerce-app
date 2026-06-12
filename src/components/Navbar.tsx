@@ -1,23 +1,25 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import { logout } from '../store/slices/authSlice';
 import { useProfile } from '../contexts/ProfileContext';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 
 export const Navbar: React.FC = () => {
-  const { isAuthenticated, user, logout } = useAuth();
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { user, isAuthenticated } = useAppSelector((state) => state.auth);
   const { profileData } = useProfile();
   const { getCartCount } = useCart();
   const { getWishlistCount } = useWishlist();
-  const navigate = useNavigate();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   const handleLogout = () => {
-    logout();
+    dispatch(logout());
     navigate('/login');
     setIsProfileOpen(false);
     setIsMobileMenuOpen(false);
@@ -25,6 +27,10 @@ export const Navbar: React.FC = () => {
 
   const handleProfileClick = () => {
     setIsProfileOpen(!isProfileOpen);
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
   };
 
   useEffect(() => {
@@ -54,11 +60,12 @@ export const Navbar: React.FC = () => {
         
         <button 
           className="hidden max-[768px]:block bg-none border-none text-white text-2xl cursor-pointer p-2"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+          onClick={toggleMobileMenu}
         >
           <span className="text-2xl">{isMobileMenuOpen ? '✕' : '☰'}</span>
         </button>
         
+        {/* Desktop Navigation */}
         <div className="flex gap-5 items-center max-[768px]:hidden">
           <Link to="/products" className="text-white no-underline px-3 py-2 rounded-md transition-colors duration-300 text-sm font-medium hover:bg-white/10">
             Products
@@ -142,6 +149,7 @@ export const Navbar: React.FC = () => {
           )}
         </div>
         
+        {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
           <div className="absolute top-full left-0 right-0 bg-[#1a1a2e] p-5 flex flex-col gap-4 z-[999] border-t border-white/10" ref={mobileMenuRef}>
             <Link to="/products" className="text-white no-underline py-2.5 text-base text-center bg-white/10 rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>
@@ -166,7 +174,7 @@ export const Navbar: React.FC = () => {
                 <Link to="/profile/wallet" className="text-white no-underline py-2.5 text-base text-center bg-white/10 rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>
                   My Wallet
                 </Link>
-                <Link to="/profile/view" className="text- no-underline py-2.5 text-base text-center bg-blue-400/20 border border-blue-400/30 text-[#4fc3f7] rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>
+                <Link to="/profile/view" className=" no-underline py-2.5 text-base text-center bg-blue-400/20 border border-blue-400/30 text-[#4fc3f7] rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>
                   👤 View Profile
                 </Link>
                 <button onClick={handleLogout} className="bg-red-500/20 text-red-500 border-none py-2.5 rounded-lg text-base cursor-pointer text-center">

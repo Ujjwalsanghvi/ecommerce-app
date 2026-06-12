@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
-
+import { useAppDispatch, useAppSelector } from '../store/hooks';  // Fixed path
+import { signup, clearError } from '../store/slices/authSlice';  // Fixed path
 export const Signup: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { loading, error: reduxError } = useAppSelector((state) => state.auth);
+  
   const [firstName, setFirstName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -11,8 +15,6 @@ export const Signup: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isPasswordHovered, setIsPasswordHovered] = useState(false);
-  const { signup } = useAuth();
-  const navigate = useNavigate();
 
   const validatePassword = (pass: string, emailAddress: string) => {
     const checks = {
@@ -87,6 +89,7 @@ export const Signup: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    dispatch(clearError());
     
     const firstNameError = validateName(firstName);
     if (firstNameError) {
@@ -117,7 +120,7 @@ export const Signup: React.FC = () => {
     }
     
     try {
-      await signup(email, password, firstName);
+      await dispatch(signup({ email, password, name: firstName })).unwrap();
       navigate('/products');
     } catch (err: any) {
       setError(err.message || 'Error creating account. Email might already exist.');
@@ -131,9 +134,9 @@ export const Signup: React.FC = () => {
     <div className="flex justify-center items-center min-h-[calc(100vh-80px)] bg-gray-100 p-5 md:p-4 md:min-h-[calc(100vh-70px)]">
       <div className="bg-white p-10 rounded-lg shadow-md w-full max-w-[500px] md:p-6 md:mx-2.5">
         <h2 className="text-center mb-8 text-gray-800 text-[28px] md:text-2xl md:mb-6">Sign Up</h2>
-        {error && (
+        {(error || reduxError) && (
           <div className="bg-red-50 text-red-700 p-3 rounded-md mb-5 text-center text-sm whitespace-pre-line md:p-2.5 md:text-xs">
-            {error}
+            {error || reduxError}
           </div>
         )}
         
@@ -305,12 +308,12 @@ export const Signup: React.FC = () => {
           
           <button 
             type="submit" 
+            disabled={!formValid || loading}
             className={`bg-blue-400 text-white border-none py-3.5 rounded-md text-base font-bold cursor-pointer transition-all duration-300 mt-2.5 md:py-3 md:text-sm ${
-              !formValid ? 'bg-gray-300 cursor-not-allowed opacity-60' : 'hover:bg-blue-500'
+              (!formValid || loading) ? 'bg-gray-300 cursor-not-allowed opacity-60' : 'hover:bg-blue-500'
             }`}
-            disabled={!formValid}
           >
-            Sign Up
+            {loading ? 'Creating Account...' : 'Sign Up'}
           </button>
           
           <div className="text-center mt-2.5">

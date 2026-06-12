@@ -1,8 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
+import { useAppDispatch, useAppSelector } from '../store/hooks';  // Fixed path
+import { login, resetPassword, clearError } from '../store/slices/authSlice';  // Fixed path
 
 export const Login: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const { loading, error: reduxError } = useAppSelector((state) => state.auth);
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -11,8 +16,6 @@ export const Login: React.FC = () => {
   const [resetMessage, setResetMessage] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [isPasswordHovered, setIsPasswordHovered] = useState(false);
-  const { login, resetPassword } = useAuth();
-  const navigate = useNavigate();
 
   const validateEmailFormat = (email: string) => {
     if (!email) return false;
@@ -80,6 +83,7 @@ export const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    dispatch(clearError());
     
     if (!email || !password) {
       setError('Please enter both email and password');
@@ -101,7 +105,7 @@ export const Login: React.FC = () => {
     }
     
     try {
-      await login(email, password);
+      await dispatch(login({ email, password })).unwrap();
       navigate('/products');
     } catch (err: any) {
       setError(err.message || 'Invalid email or password. Please try again.');
@@ -112,6 +116,7 @@ export const Login: React.FC = () => {
     e.preventDefault();
     setError('');
     setResetMessage('');
+    dispatch(clearError());
     
     if (!resetEmail) {
       setError('Please enter your email address');
@@ -125,7 +130,7 @@ export const Login: React.FC = () => {
     }
     
     try {
-      await resetPassword(resetEmail);
+      await dispatch(resetPassword({ email: resetEmail })).unwrap();
       setResetMessage('Password reset link sent to your email! Check console for demo.');
       setTimeout(() => {
         setShowReset(false);
@@ -146,9 +151,9 @@ export const Login: React.FC = () => {
         <h2 className="text-center mb-2 text-[#1a1a2e] text-[28px] font-bold md:text-2xl">Welcome Back</h2>
         <p className="text-center mb-8 text-gray-500 text-sm md:text-xs md:mb-6">Please sign in to your account</p>
         
-        {error && (
+        {(error || reduxError) && (
           <div className="bg-red-50 text-red-700 p-3 rounded-lg mb-5 text-center text-xs md:p-2.5">
-            {error}
+            {error || reduxError}
           </div>
         )}
         
@@ -251,12 +256,12 @@ export const Login: React.FC = () => {
             
             <button 
               type="submit" 
+              disabled={!formValid || loading}
               className={`bg-blue-400 text-white border-none py-3.5 rounded-lg text-base font-semibold cursor-pointer transition-all duration-300 mt-2.5 md:py-3 md:text-sm ${
-                !formValid ? 'bg-gray-300 cursor-not-allowed opacity-60' : 'hover:bg-blue-500'
+                (!formValid || loading) ? 'bg-gray-300 cursor-not-allowed opacity-60' : 'hover:bg-blue-500'
               }`}
-              disabled={!formValid}
             >
-              Sign In
+              {loading ? 'Signing in...' : 'Sign In'}
             </button>
             
             <div className="flex justify-between mt-2.5 pt-2.5 border-t border-gray-100 md:flex-col md:gap-2.5 md:items-center">
@@ -312,20 +317,20 @@ export const Login: React.FC = () => {
                 {resetMessage}
               </div>
             )}
-            {error && (
+            {(error || reduxError) && (
               <div className="bg-red-50 text-red-700 p-3 rounded-lg text-center text-xs">
-                {error}
+                {error || reduxError}
               </div>
             )}
             
             <button 
               type="submit" 
+              disabled={!resetEmail || !validateEmailFormat(resetEmail) || resetEmail.length > 50 || loading}
               className={`bg-blue-400 text-white border-none py-3.5 rounded-lg text-base font-semibold cursor-pointer transition-all duration-300 mt-2.5 md:py-3 md:text-sm ${
-                (!resetEmail || !validateEmailFormat(resetEmail) || resetEmail.length > 50) ? 'bg-gray-300 cursor-not-allowed opacity-60' : 'hover:bg-blue-500'
+                (!resetEmail || !validateEmailFormat(resetEmail) || resetEmail.length > 50 || loading) ? 'bg-gray-300 cursor-not-allowed opacity-60' : 'hover:bg-blue-500'
               }`}
-              disabled={!resetEmail || !validateEmailFormat(resetEmail) || resetEmail.length > 50}
             >
-              Send Reset Link
+              {loading ? 'Sending...' : 'Send Reset Link'}
             </button>
             
             <button
@@ -333,6 +338,7 @@ export const Login: React.FC = () => {
               onClick={() => {
                 setShowReset(false);
                 setError('');
+                dispatch(clearError());
               }}
               className="bg-none border-none text-blue-400 cursor-pointer text-sm font-medium mt-4 py-2 w-full text-center rounded-md transition-colors duration-300 hover:bg-gray-100 md:text-xs"
             >

@@ -1,9 +1,10 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { AuthProvider } from './contexts/AuthContext';
+import { Provider } from 'react-redux';
+import { store } from './store';
 import { CartProvider } from './contexts/CartContext';
 import { ProfileProvider } from './contexts/ProfileContext';
-import { WishlistProvider } from './contexts/WishlistContext'; // Add this import
+import { WishlistProvider } from './contexts/WishlistContext';
 import { Navbar } from './components/Navbar';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { BackButton } from './components/BackButton';
@@ -13,7 +14,7 @@ import { ProductList } from './pages/ProductList';
 import { ProductDetail } from './pages/ProductDetail';
 import { Cart } from './pages/Cart';
 import { Checkout } from './pages/Checkout';
-import { Wishlist } from './pages/Wishlist'; // Add this import
+import { Wishlist } from './pages/Wishlist';
 import { Address } from './pages/Profile/Address';
 import { Orders } from './pages/Profile/Orders';
 import { Wallet } from './pages/Profile/Wallet';
@@ -21,10 +22,10 @@ import { ViewProfile } from './pages/Profile/ViewProfile';
 
 function App() {
   return (
-    <Router>
-      <AuthProvider>
+    <Provider store={store}>
+      <Router>
         <ProfileProvider>
-          <WishlistProvider>   {/* Add WishlistProvider HERE - before CartProvider */}
+          <WishlistProvider>
             <CartProvider>
               <Navbar />
               <Routes>
@@ -71,10 +72,10 @@ function App() {
               </Routes>
               <BackButton />
             </CartProvider>
-          </WishlistProvider>  {/* Close WishlistProvider here */}
+          </WishlistProvider>
         </ProfileProvider>
-      </AuthProvider>
-    </Router>
+      </Router>
+    </Provider>
   );
 }
 

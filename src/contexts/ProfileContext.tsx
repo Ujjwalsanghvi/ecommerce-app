@@ -1,17 +1,32 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useAuth } from './AuthContext';
+// Remove: import { useAuth } from './AuthContext';
 import { ProfileData } from '../types/ProfileData';
 import { IAddress } from '../types/Address';
 import { Transaction } from '../types/Transaction';
-import { Order } from '../types/Order'; // Add this import - use Order instead of ImpOrder
-import { ProfileContextType } from '../types/ProfileContextType';
-import { demoOrders } from '../data/demoOrders';
-import { demoTransactions } from '../data/demoTransactions';
-import { getDemoAddresses } from '../data/demoAddresses';
+import { Order } from '../types/Order';
+
+interface ProfileContextType {
+  profileData: ProfileData;
+  updateProfilePicture: (imageUrl: string) => void;
+  updateProfileData: (data: Partial<ProfileData>) => void;
+  openEditModal: () => void;
+  closeEditModal: () => void;
+  isEditModalOpen: boolean;
+  editData: ProfileData;
+  setEditData: (data: ProfileData) => void;
+  handleInputChange: (field: keyof ProfileData, value: string) => void;
+  handleSaveChanges: () => void;
+  handleEditClick: () => void;
+  orders: Order[];
+  addresses: IAddress[];
+  transactions: Transaction[];
+  walletBalance: number;
+  loadStatistics: () => void;
+}
 
 const ProfileContext = createContext<ProfileContextType | undefined>(undefined);
 
-export const useProfile = (): ProfileContextType => {
+export const useProfile = () => {
   const context = useContext(ProfileContext);
   if (!context) {
     throw new Error('useProfile must be used within ProfileProvider');
@@ -20,7 +35,17 @@ export const useProfile = (): ProfileContextType => {
 };
 
 export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user } = useAuth();
+  // Get user from localStorage instead of useAuth
+  const getUser = () => {
+    const userStr = localStorage.getItem('user');
+    if (userStr) {
+      return JSON.parse(userStr);
+    }
+    return null;
+  };
+  
+  const user = getUser();
+  
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [profileData, setProfileData] = useState<ProfileData>({
     fullName: user?.name || '',
@@ -34,7 +59,6 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
   });
   const [editData, setEditData] = useState<ProfileData>(profileData);
 
-  // Statistics state - changed ImpOrder[] to Order[]
   const [orders, setOrders] = useState<Order[]>([]);
   const [addresses, setAddresses] = useState<IAddress[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -68,6 +92,8 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (savedOrders) {
       setOrders(JSON.parse(savedOrders));
     } else {
+      // Demo orders
+      const demoOrders: Order[] = [];
       setOrders(demoOrders);
       localStorage.setItem(`orders_${user?.id}`, JSON.stringify(demoOrders));
     }
@@ -78,7 +104,7 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (savedAddresses) {
       setAddresses(JSON.parse(savedAddresses));
     } else {
-      const demoAddresses=getDemoAddresses(user)
+      const demoAddresses: IAddress[] = [];
       setAddresses(demoAddresses);
       localStorage.setItem(`addresses_${user?.id}`, JSON.stringify(demoAddresses));
     }
@@ -98,6 +124,7 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
     if (savedTransactions) {
       setTransactions(JSON.parse(savedTransactions));
     } else {
+      const demoTransactions: Transaction[] = [];
       setTransactions(demoTransactions);
       localStorage.setItem(`wallet_transactions_${user?.id}`, JSON.stringify(demoTransactions));
     }

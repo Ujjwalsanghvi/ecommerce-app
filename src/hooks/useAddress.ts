@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import { useAppSelector } from '../store/hooks';
 import { IAddress } from '../types/Address';
 import { getDemoAddresses } from '../data/demoAddresses';
-import { getInitialAddressForm } from '../data/addressFormData';
+import { 
+  getInitialAddressForm, 
+  getAddressFormFromAddress, 
+  getAddressFormWithName 
+} from '../data/addressFormData';
 
 export const useAddress = () => {
-  const { user } = useAuth();
+  // Get user from Redux instead of AuthContext
+  const { user } = useAppSelector((state) => state.auth);
+  
   const [addresses, setAddresses] = useState<IAddress[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingAddress, setEditingAddress] = useState<IAddress | null>(null);
@@ -13,7 +19,7 @@ export const useAddress = () => {
 
   useEffect(() => {
     loadAddresses();
-  }, []);
+  }, [user?.id]);
 
   const loadAddresses = () => {
     const savedAddresses = localStorage.getItem(`addresses_${user?.id}`);
@@ -22,7 +28,7 @@ export const useAddress = () => {
     } else {
       const demoAddresses = getDemoAddresses(user);
       setAddresses(demoAddresses);
-      localStorage.setItem(`addresses_user_${user?.id}`, JSON.stringify(demoAddresses));
+      localStorage.setItem(`addresses_${user?.id}`, JSON.stringify(demoAddresses));
     }
   };
 
@@ -59,7 +65,7 @@ export const useAddress = () => {
 
   const handleEdit = (address: IAddress) => {
     setEditingAddress(address);
-    setFormData(getInitialAddressForm(address));
+    setFormData(getAddressFormFromAddress(address));
     setShowForm(true);
   };
 
@@ -80,7 +86,7 @@ export const useAddress = () => {
 
   const openAddForm = () => {
     setEditingAddress(null);
-    setFormData(getInitialAddressForm());
+    setFormData(getAddressFormWithName(user?.name || ''));
     setShowForm(true);
   };
 

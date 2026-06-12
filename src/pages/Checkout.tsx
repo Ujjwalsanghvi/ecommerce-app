@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
-import { useAuth } from '../contexts/AuthContext';
+import { useAppSelector } from '../store/hooks';
 
 export const Checkout: React.FC = () => {
   const { cart, getCartTotal, clearCart } = useCart();
-  const { user } = useAuth();
+  const { user } = useAppSelector((state) => state.auth);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     fullName: user?.name || '',
@@ -17,6 +17,7 @@ export const Checkout: React.FC = () => {
     cvv: ''
   });
 
+  // Load saved address if exists
   useEffect(() => {
     const savedAddresses = localStorage.getItem(`addresses_${user?.id}`);
     if (savedAddresses) {
@@ -43,6 +44,7 @@ export const Checkout: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
+    // Create order
     const newOrder = {
       id: `ORD-${Date.now()}`,
       date: new Date().toISOString().split('T')[0],
@@ -63,15 +65,18 @@ export const Checkout: React.FC = () => {
       }
     };
     
+    // Save order to localStorage
     const existingOrders = localStorage.getItem(`orders_${user?.id}`);
     const orders = existingOrders ? JSON.parse(existingOrders) : [];
     orders.unshift(newOrder);
     localStorage.setItem(`orders_${user?.id}`, JSON.stringify(orders));
     
+    // Update wallet balance (deduct amount)
     const currentBalance = parseFloat(localStorage.getItem(`wallet_balance_${user?.id}`) || '0');
     const newBalance = currentBalance - getCartTotal();
     localStorage.setItem(`wallet_balance_${user?.id}`, newBalance.toString());
     
+    // Add transaction record
     const existingTransactions = localStorage.getItem(`wallet_transactions_${user?.id}`);
     const transactions = existingTransactions ? JSON.parse(existingTransactions) : [];
     transactions.unshift({
