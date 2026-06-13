@@ -1,8 +1,29 @@
 import React from 'react';
-import { useProfile } from '../../contexts/ProfileContext';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { 
+  selectEditData, 
+  selectIsEditModalOpen,
+  closeEditModal,
+  handleInputChange,
+  handleSaveChanges
+} from '../../store/slices/profileSlice';
 
 export const EditProfileModal: React.FC = () => {
-  const { isEditModalOpen, editData, handleInputChange, handleSaveChanges, closeEditModal } = useProfile();
+  const dispatch = useAppDispatch();
+  const isEditModalOpen = useAppSelector(selectIsEditModalOpen);
+  const editData = useAppSelector(selectEditData);
+
+  const handleClose = () => {
+    dispatch(closeEditModal());
+  };
+
+  const handleChange = (field: string, value: string) => {
+    dispatch(handleInputChange({ field: field as any, value }));
+  };
+
+  const handleSave = () => {
+    dispatch(handleSaveChanges());
+  };
 
   if (!isEditModalOpen) return null;
 
@@ -12,7 +33,7 @@ export const EditProfileModal: React.FC = () => {
         <div className="flex justify-between items-center p-5 border-b border-gray-200">
           <h2 className="text-xl font-bold text-gray-800 m-0">Edit Personal Information</h2>
           <button
-            onClick={closeEditModal}
+            onClick={handleClose}
             className="bg-none border-none text-xl cursor-pointer text-gray-400 w-8 h-8 flex items-center justify-center rounded hover:text-gray-800"
           >
             ✕
@@ -24,7 +45,7 @@ export const EditProfileModal: React.FC = () => {
             <input
               type="text"
               value={editData.fullName}
-              onChange={(e) => handleInputChange('fullName', e.target.value)}
+              onChange={(e) => handleChange('fullName', e.target.value)}
               className="w-full p-2.5 border border-gray-300 rounded-md text-sm"
             />
           </div>
@@ -43,7 +64,7 @@ export const EditProfileModal: React.FC = () => {
             <input
               type="tel"
               value={editData.phone}
-              onChange={(e) => handleInputChange('phone', e.target.value)}
+              onChange={(e) => handleChange('phone', e.target.value)}
               placeholder="Enter your phone number"
               className="w-full p-2.5 border border-gray-300 rounded-md text-sm"
             />
@@ -53,7 +74,7 @@ export const EditProfileModal: React.FC = () => {
             <input
               type="date"
               value={editData.dateOfBirth}
-              onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
+              onChange={(e) => handleChange('dateOfBirth', e.target.value)}
               className="w-full p-2.5 border border-gray-300 rounded-md text-sm"
             />
           </div>
@@ -61,7 +82,7 @@ export const EditProfileModal: React.FC = () => {
             <label className="block text-sm font-semibold mb-1.5">Gender</label>
             <select
               value={editData.gender}
-              onChange={(e) => handleInputChange('gender', e.target.value)}
+              onChange={(e) => handleChange('gender', e.target.value)}
               className="w-full p-2.5 border border-gray-300 rounded-md text-sm bg-white"
             >
               <option value="">Select gender</option>
@@ -74,7 +95,7 @@ export const EditProfileModal: React.FC = () => {
             <label className="block text-sm font-semibold mb-1.5">Bio</label>
             <textarea
               value={editData.bio}
-              onChange={(e) => handleInputChange('bio', e.target.value)}
+              onChange={(e) => handleChange('bio', e.target.value)}
               rows={4}
               placeholder="Tell us about yourself"
               className="w-full p-2.5 border border-gray-300 rounded-md text-sm font-inherit resize-vertical"
@@ -82,10 +103,10 @@ export const EditProfileModal: React.FC = () => {
           </div>
         </div>
         <div className="flex gap-2.5 p-5 border-t border-gray-200">
-          <button onClick={closeEditModal} className="flex-1 py-2.5 bg-gray-100 border-none rounded-md cursor-pointer text-sm hover:bg-gray-200">
+          <button onClick={handleClose} className="flex-1 py-2.5 bg-gray-100 border-none rounded-md cursor-pointer text-sm hover:bg-gray-200">
             Cancel
           </button>
-          <button onClick={handleSaveChanges} className="flex-1 py-2.5 bg-blue-400 text-white border-none rounded-md cursor-pointer text-sm hover:bg-blue-500">
+          <button onClick={handleSave} className="flex-1 py-2.5 bg-blue-400 text-white border-none rounded-md cursor-pointer text-sm hover:bg-blue-500">
             Save Changes
           </button>
         </div>

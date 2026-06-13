@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { useProfile } from '../../contexts/ProfileContext';
+import { useAppSelector } from '../../store/hooks';
+import { selectProfileData } from '../../store/slices/profileSlice';
 
 export const PersonalInfoSection: React.FC = () => {
-  const { profileData } = useProfile();
+  const profileData = useAppSelector(selectProfileData);
   const [isOpen, setIsOpen] = useState(true);
 
   return (

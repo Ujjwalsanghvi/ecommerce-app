@@ -1,8 +1,10 @@
 import React, { useRef } from 'react';
-import { useProfile } from '../../contexts/ProfileContext';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { selectProfileData, updateProfilePicture, handleEditClick } from '../../store/slices/profileSlice';
 
 export const ProfileSidebar: React.FC = () => {
-  const { profileData, updateProfilePicture, handleEditClick } = useProfile();
+  const dispatch = useAppDispatch();
+  const profileData = useAppSelector(selectProfileData);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -11,10 +13,14 @@ export const ProfileSidebar: React.FC = () => {
       const reader = new FileReader();
       reader.onloadend = () => {
         const imageUrl = reader.result as string;
-        updateProfilePicture(imageUrl);
+        dispatch(updateProfilePicture(imageUrl));
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const handleEdit = () => {
+    dispatch(handleEditClick());
   };
 
   return (
@@ -51,7 +57,7 @@ export const ProfileSidebar: React.FC = () => {
         <h3 className="text-base font-bold mb-1 text-gray-800">{profileData.fullName}</h3>
         <p className="text-xs text-gray-500 mb-4">{profileData.email}</p>
         <button
-          onClick={handleEditClick}
+          onClick={handleEdit}
           className="bg-blue-400 text-white border-none py-2 px-4 cursor-pointer text-xs w-full transition-all duration-300 rounded-full hover:bg-blue-500 hover:-translate-y-0.5"
         >
           ✏️ Edit Personal Information

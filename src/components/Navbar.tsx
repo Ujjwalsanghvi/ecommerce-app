@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { logout } from '../store/slices/authSlice';
 import { selectCartCount } from '../store/slices/cartSlice';
-import { useProfile } from '../contexts/ProfileContext';
+import { selectProfileData } from '../store/slices/profileSlice';
 import { useWishlist } from '../contexts/WishlistContext';
 
 export const Navbar: React.FC = () => {
@@ -11,7 +11,7 @@ export const Navbar: React.FC = () => {
   const navigate = useNavigate();
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
   const cartCount = useAppSelector(selectCartCount);
-  const { profileData } = useProfile();
+  const profileData = useAppSelector(selectProfileData);
   const { getWishlistCount } = useWishlist();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);

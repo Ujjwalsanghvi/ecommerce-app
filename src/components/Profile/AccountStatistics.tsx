@@ -1,16 +1,41 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useProfile } from '../../contexts/ProfileContext';
-import { Order, OrderCardProps } from '../../types/Order';  // Changed: use Order instead of ImpOrder
+import { useAppSelector } from '../../store/hooks';
+import { selectOrders, selectAddresses, selectTransactions, selectWalletBalance } from '../../store/slices/profileSlice';
+import { Order } from '../../types/Order';
 import { IAddress } from '../../types/Address';
 import { Transaction } from '../../types/Transaction';
-import { StatCardProps } from '../../types/StatCardProps';
-import { TransactionCardProps } from '../../types/TransactionCardProps';
-import { AddressCardProps } from '../../types/AddressCardProps';
 
+// Define interfaces locally
+interface StatCardProps {
+  icon: string;
+  label: string;
+  value: string | number;
+  isOpen: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}
+
+interface OrderCardProps {
+  order: Order;
+  getStatusColor: (status: string) => string;
+}
+
+interface AddressCardProps {
+  address: IAddress;
+}
+
+interface TransactionCardProps {
+  transaction: Transaction;
+}
 
 export const AccountStatistics: React.FC = () => {
-  const { orders, addresses, transactions, walletBalance } = useProfile();
+  // Use Redux selectors instead of useProfile()
+  const orders = useAppSelector(selectOrders);
+  const addresses = useAppSelector(selectAddresses);
+  const transactions = useAppSelector(selectTransactions);
+  const walletBalance = useAppSelector(selectWalletBalance);
+  
   const [isStatsOpen, setIsStatsOpen] = useState(true);
   const [selectedStat, setSelectedStat] = useState<string | null>(null);
 
@@ -66,7 +91,7 @@ export const AccountStatistics: React.FC = () => {
                 <p className="text-center text-gray-400 p-5">No orders found</p>
               ) : (
                 <>
-                  {latestOrders.map((order: Order) => (  // Changed: ImpOrder → Order
+                  {latestOrders.map((order: Order) => (
                     <OrderCard key={order.id} order={order} getStatusColor={getStatusColor} />
                   ))}
                   {orders.length > 1 && (
@@ -159,7 +184,7 @@ export const AccountStatistics: React.FC = () => {
   );
 };
 
-// Helper Components - moved inside the same file
+// Helper Components
 const StatCard: React.FC<StatCardProps> = ({ icon, label, value, isOpen, onToggle, children }) => (
   <>
     <div
