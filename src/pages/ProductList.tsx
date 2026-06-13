@@ -1,14 +1,14 @@
-import { useWishlist } from '../contexts/WishlistContext';
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { Product } from '../types/Mainview';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { addToCart } from '../store/slices/cartSlice';
+import { addToWishlist, removeFromWishlist, selectWishlistItems } from '../store/slices/wishlistSlice';
 
 export const ProductList: React.FC = () => {
   const dispatch = useAppDispatch();
-  const cartItems = useAppSelector((state) => state.cart.items);
+  const wishlistItems = useAppSelector(selectWishlistItems);
   
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
@@ -17,10 +17,12 @@ export const ProductList: React.FC = () => {
   const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  // Helper function to check if product is in wishlist
+  const isInWishlist = (productId: number) => {
+    return wishlistItems.some(item => item.id === productId);
+  };
 
   useEffect(() => {
     fetchProducts();
@@ -105,9 +107,9 @@ export const ProductList: React.FC = () => {
     e.stopPropagation();
 
     if (isInWishlist(product.id)) {
-      removeFromWishlist(product.id);
+      dispatch(removeFromWishlist(product.id));
     } else {
-      addToWishlist(product);
+      dispatch(addToWishlist(product));
     }
   };
 
@@ -302,200 +304,192 @@ export const ProductList: React.FC = () => {
           max-[560px]:gap-4
         "
       >
-        {filteredProducts.map((product) => (
-          <div
-            key={product.id}
-            style={{
-              transform: isInWishlist(product.id)
-                ? 'translateY(-4px)'
-                : 'initial',
-              position: isInWishlist(product.id)
-                ? 'relative'
-                : 'initial',
-
-            }}
-            className="
-              hover:relative
-              bg-white
-              rounded-2xl
-              overflow-hidden
-              transition-all
-              duration-300
-              shadow-[0_2px_8px_rgba(0,0,0,0.06)]
-              border
-              border-[#f0f0f0]
-              flex
-              flex-col
-              hover:!translate-y-[-4px]
-              hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)]
-            "
-          >
-            {/* Wishlist Button */}
-            <button
-              onClick={(e) =>
-                handleFavoriteToggle(product, e)
-              }
+        {filteredProducts.map((product) => {
+          const isProductInWishlist = isInWishlist(product.id);
+          return (
+            <div
+              key={product.id}
+              style={{
+                transform: isProductInWishlist
+                  ? 'translateY(-4px)'
+                  : 'initial',
+              }}
               className="
-                absolute
-                top-[10px]
-                right-[10px]
                 bg-white
-                border-none
-                rounded-full
-                w-8
-                h-8
-                opacity-100
-                text-[18px]
-                cursor-pointer
+                rounded-2xl
+                overflow-hidden
+                transition-all
+                duration-300
+                shadow-[0_2px_8px_rgba(0,0,0,0.06)]
+                border
+                border-[#f0f0f0]
                 flex
-                items-center
-                justify-center
-                shadow-[0_2px_4px_rgba(0,0,0,0.1)]
-                z-[1]
+                flex-col
+                hover:!translate-y-[-4px]
+                hover:shadow-[0_8px_24px_rgba(0,0,0,0.12)]
+                relative
               "
             >
-              {isInWishlist(product.id)
-                ? '❤️'
-                : '🤍'}
-            </button>
-
-            <Link
-              to={`/product/${product.id}`}
-              className="no-underline text-[#333] flex-1 flex flex-col"
-            >
-              {/* Product Image */}
-              <div
+              {/* Wishlist Button */}
+              <button
+                onClick={(e) => handleFavoriteToggle(product, e)}
                 className="
-                  p-5
-                  bg-[#fafafa]
+                  absolute
+                  top-[10px]
+                  right-[10px]
+                  bg-white
+                  border-none
+                  rounded-full
+                  w-8
+                  h-8
+                  text-[18px]
+                  cursor-pointer
                   flex
                   items-center
                   justify-center
-                  border-b
-                  border-[#f0f0f0]
+                  shadow-[0_2px_4px_rgba(0,0,0,0.1)]
+                  z-[1]
+                  transition-transform
+                  duration-200
+                  hover:scale-110
                 "
+                style={{ color: isProductInWishlist ? '#ff4444' : '#cccccc' }}
               >
-                <img
-                  src={product.image}
-                  alt={product.title}
+                {isProductInWishlist ? '❤️' : '🤍'}
+              </button>
+
+              <Link
+                to={`/product/${product.id}`}
+                className="no-underline text-[#333] flex-1 flex flex-col"
+              >
+                {/* Product Image */}
+                <div
                   className="
-                    w-full
-                    h-[200px]
-                    object-contain
-                    transition-transform
-                    duration-300
-
-                    group-hover:scale-105
-
-                    max-lg:h-[180px]
-                    max-md:h-[160px]
-                    max-[560px]:h-[200px]
-                    max-[480px]:h-[180px]
+                    p-5
+                    bg-[#fafafa]
+                    flex
+                    items-center
+                    justify-center
+                    border-b
+                    border-[#f0f0f0]
                   "
-                />
-              </div>
+                >
+                  <img
+                    src={product.image}
+                    alt={product.title}
+                    className="
+                      w-full
+                      h-[200px]
+                      object-contain
+                      transition-transform
+                      duration-300
+                      hover:scale-105
 
-              {/* Product Title */}
-              <h3
+                      max-lg:h-[180px]
+                      max-md:h-[160px]
+                      max-[560px]:h-[200px]
+                      max-[480px]:h-[180px]
+                    "
+                  />
+                </div>
+
+                {/* Product Title */}
+                <h3
+                  className="
+                    text-[15px]
+                    font-medium
+                    m-[16px_16px_8px_16px]
+                    leading-[1.4]
+                    min-h-[42px]
+                    text-[#333]
+
+                    max-md:text-[14px]
+                    max-md:m-[12px_12px_6px_12px]
+                    max-md:min-h-[38px]
+
+                    max-[480px]:text-[13px]
+                  "
+                >
+                  {product.title.length > 50
+                    ? product.title.substring(0, 50) + '...'
+                    : product.title}
+                </h3>
+
+                {/* Product Price */}
+                <div
+                  className="
+                    text-[22px]
+                    font-bold
+                    text-[#4fc3f7]
+                    m-[0_16px_8px_16px]
+
+                    max-md:text-[20px]
+                    max-md:m-[0_12px_6px_12px]
+
+                    max-[480px]:text-[18px]
+                  "
+                >
+                  ${product.price.toFixed(2)}
+                </div>
+
+                {/* Rating */}
+                <div
+                  className="
+                    flex
+                    items-center
+                    gap-[5px]
+                    m-[0_16px_16px_16px]
+                    text-[14px]
+
+                    max-md:m-[0_12px_12px_12px]
+                    max-md:text-[13px]
+
+                    max-[480px]:text-[12px]
+                  "
+                >
+                  <span className="text-[#ffc107] text-[16px]">★</span>
+                  <span>{product.rating.rate}</span>
+                  <span className="text-[#999] text-[12px]">
+                    ({product.rating.count} reviews)
+                  </span>
+                </div>
+              </Link>
+
+              {/* Add To Cart */}
+              <button
+                onClick={() => handleAddToCart(product)}
                 className="
-                  text-[15px]
-                  font-medium
-                  m-[16px_16px_8px_16px]
-                  leading-[1.4]
-                  min-h-[42px]
-                  text-[#333]
-
-                  max-md:text-[14px]
-                  max-md:m-[12px_12px_6px_12px]
-                  max-md:min-h-[38px]
-
-                  max-[480px]:text-[13px]
-                "
-              >
-                {product.title.length > 50
-                  ? product.title.substring(0, 50) +
-                  '...'
-                  : product.title}
-              </h3>
-
-              {/* Product Price */}
-              <div
-                className="
-                  text-[22px]
-                  font-bold
-                  text-[#4fc3f7]
-                  m-[0_16px_8px_16px]
-
-                  max-md:text-[20px]
-                  max-md:m-[0_12px_6px_12px]
-
-                  max-[480px]:text-[18px]
-                "
-              >
-                ${product.price.toFixed(2)}
-              </div>
-
-              {/* Rating */}
-              <div
-                className="
+                  m-[0_16px_16px_16px]
+                  bg-[#4fc3f7]
+                  text-white
+                  border-none
+                  p-3
+                  rounded-[10px]
+                  cursor-pointer
+                  text-[14px]
+                  font-semibold
+                  transition-all
+                  duration-300
                   flex
                   items-center
-                  gap-[5px]
-                  m-[0_16px_16px_16px]
-                  text-[14px]
+                  justify-center
+                  gap-2
+                  hover:bg-[#45b5e6]
+                  hover:scale-[1.02]
 
                   max-md:m-[0_12px_12px_12px]
+                  max-md:p-[10px]
                   max-md:text-[13px]
 
+                  max-[480px]:p-2
                   max-[480px]:text-[12px]
                 "
               >
-                <span className="text-[#ffc107] text-[16px]">
-                  ★
-                </span>
-
-                <span>{product.rating.rate}</span>
-
-                <span className="text-[#999] text-[12px]">
-                  ({product.rating.count} reviews)
-                </span>
-              </div>
-            </Link>
-
-            {/* Add To Cart - Now using Redux dispatch */}
-            <button
-              onClick={() => handleAddToCart(product)}
-              className="
-                m-[0_16px_16px_16px]
-                bg-[#4fc3f7]
-                text-white
-                border-none
-                p-3
-                rounded-[10px]
-                cursor-pointer
-                text-[14px]
-                font-semibold
-                transition-all
-                duration-300
-                flex
-                items-center
-                justify-center
-                gap-2
-                hover:bg-[#45b5e6]
-                hover:scale-[1.02]
-
-                max-md:m-[0_12px_12px_12px]
-                max-md:p-[10px]
-                max-md:text-[13px]
-
-                max-[480px]:p-2
-                max-[480px]:text-[12px]
-              "
-            >
-              🛒 Add to Cart
-            </button>
-          </div>
-        ))}
+                🛒 Add to Cart
+              </button>
+            </div>
+          );
+        })}
       </div>
 
       <style>{`
@@ -504,7 +498,6 @@ export const ProductList: React.FC = () => {
             opacity: 0;
             transform: translateY(-10px);
           }
-
           to {
             opacity: 1;
             transform: translateY(0);

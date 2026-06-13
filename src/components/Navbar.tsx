@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { logout } from '../store/slices/authSlice';
 import { selectCartCount } from '../store/slices/cartSlice';
 import { selectProfileData } from '../store/slices/profileSlice';
-import { useWishlist } from '../contexts/WishlistContext';
+import { selectWishlistCount } from '../store/slices/wishlistSlice';
 
 export const Navbar: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -12,7 +12,7 @@ export const Navbar: React.FC = () => {
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
   const cartCount = useAppSelector(selectCartCount);
   const profileData = useAppSelector(selectProfileData);
-  const { getWishlistCount } = useWishlist();
+  const wishlistCount = useAppSelector(selectWishlistCount);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -72,7 +72,7 @@ export const Navbar: React.FC = () => {
           </Link>
 
           <Link to="/wishlist" className="text-white no-underline px-3 py-2 rounded-md transition-colors duration-300 text-sm font-medium hover:bg-white/10">
-            ❤️ Wishlist ({getWishlistCount()})
+            ❤️ Wishlist ({wishlistCount})
           </Link>
           
           {isAuthenticated ? (
@@ -157,7 +157,7 @@ export const Navbar: React.FC = () => {
             </Link>
 
             <Link to="/wishlist" className="text-white no-underline py-2.5 text-base text-center bg-white/10 rounded-lg" onClick={() => setIsMobileMenuOpen(false)}>
-              ❤️ Wishlist ({getWishlistCount()})
+              ❤️ Wishlist ({wishlistCount})
             </Link>
             
             {isAuthenticated ? (

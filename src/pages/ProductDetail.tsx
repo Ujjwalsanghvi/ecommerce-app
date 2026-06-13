@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { api } from '../services/api';
 import { Product } from '../types/Mainview';
-import { useAppDispatch } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { addToCart } from '../store/slices/cartSlice';
-import { useWishlist } from '../contexts/WishlistContext';
+import { addToWishlist, removeFromWishlist, selectIsInWishlist } from '../store/slices/wishlistSlice';
 
 export const ProductDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -12,8 +12,14 @@ export const ProductDetail: React.FC = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [loading, setLoading] = useState(true);
-  const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const navigate = useNavigate();
+
+  // Use selector to check if product is in wishlist
+  const isInWishlist = useCallback((productId: number) => {
+    const selector = selectIsInWishlist(productId);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useAppSelector(selector);
+  }, []);
 
   useEffect(() => {
     if (id) {
@@ -42,9 +48,9 @@ export const ProductDetail: React.FC = () => {
   const handleFavoriteToggle = () => {
     if (product) {
       if (isInWishlist(product.id)) {
-        removeFromWishlist(product.id);
+        dispatch(removeFromWishlist(product.id));
       } else {
-        addToWishlist(product);
+        dispatch(addToWishlist(product));
       }
     }
   };
@@ -56,6 +62,8 @@ export const ProductDetail: React.FC = () => {
   if (!product) {
     return <div className="text-center text-2xl text-red-500 mt-12">Product not found</div>;
   }
+
+  const isProductInWishlist = isInWishlist(product.id);
 
   return (
     <div className="max-w-[1200px] mx-auto px-5 py-10">
@@ -73,10 +81,10 @@ export const ProductDetail: React.FC = () => {
             <h1 className="text-[28px] text-gray-800">{product.title}</h1>
             <button
               onClick={handleFavoriteToggle}
-              className="bg-none border-none text-[28px] cursor-pointer p-2"
-              style={{ color: isInWishlist(product.id) ? '#ff4444' : '#cccccc' }}
+              className="bg-none border-none text-[28px] cursor-pointer p-2 transition-transform duration-200 hover:scale-110"
+              style={{ color: isProductInWishlist ? '#ff4444' : '#cccccc' }}
             >
-              {isInWishlist(product.id) ? '❤️' : '🤍'}
+              {isProductInWishlist ? '❤️' : '🤍'}
             </button>
           </div>
           <p className="text-base text-gray-500 capitalize">Category: {product.category}</p>

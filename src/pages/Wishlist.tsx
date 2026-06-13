@@ -1,16 +1,28 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useWishlist } from '../contexts/WishlistContext';
-import { useAppDispatch } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import { addToCart } from '../store/slices/cartSlice';
+import { 
+  selectWishlistItems, 
+  removeFromWishlist, 
+  clearWishlist 
+} from '../store/slices/wishlistSlice';
 
 export const Wishlist: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { wishlist, removeFromWishlist, clearWishlist } = useWishlist();
+  const wishlist = useAppSelector(selectWishlistItems);
 
   const handleMoveToCart = (product: any) => {
     dispatch(addToCart({ product, quantity: 1 }));
-    removeFromWishlist(product.id);
+    dispatch(removeFromWishlist(product.id));
+  };
+
+  const handleRemoveFromWishlist = (productId: number) => {
+    dispatch(removeFromWishlist(productId));
+  };
+
+  const handleClearWishlist = () => {
+    dispatch(clearWishlist());
   };
 
   if (wishlist.length === 0) {
@@ -33,7 +45,7 @@ export const Wishlist: React.FC = () => {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-[28px] text-gray-800">My Wishlist</h1>
         <button 
-          onClick={clearWishlist} 
+          onClick={handleClearWishlist} 
           className="px-5 py-2.5 bg-red-500 text-white border-none rounded-md cursor-pointer text-sm hover:bg-red-600 transition-all duration-300"
         >
           Clear All
@@ -44,7 +56,7 @@ export const Wishlist: React.FC = () => {
         {wishlist.map(product => (
           <div key={product.id} className="bg-white rounded-xl p-4 relative shadow-md transition-transform duration-300 hover:-translate-y-1">
             <button
-              onClick={() => removeFromWishlist(product.id)}
+              onClick={() => handleRemoveFromWishlist(product.id)}
               className="absolute top-2.5 right-2.5 bg-white border-none rounded-full w-7 h-7 text-base cursor-pointer flex items-center justify-center shadow-sm text-red-500 hover:bg-gray-50 transition-all duration-300"
             >
               ✕
